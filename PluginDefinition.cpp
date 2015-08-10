@@ -39,12 +39,13 @@ void pluginInit( HANDLE hModule )
 {
     // Save original edge properties
     HWND hCurScintilla = getCurScintilla();
-    iEdgeModeOrig = SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
-    iEdgeColOrig = SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
+    iEdgeModeOrig = ::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
+    iEdgeColOrig =  ::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
 
-    TCHAR szBuffer[100];
-    wsprintf( szBuffer, TEXT( "%i" ), iEdgeModeOrig );
-    ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight" ), MB_OK );
+    // Debug
+    // TCHAR szBuffer[100];
+    // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
+    // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - INIT" ), MB_OK );
 
     disColHi();
 }
@@ -127,14 +128,20 @@ void enColHi()
 
     // Save original edge properties
     HWND hCurScintilla = getCurScintilla();
-    iEdgeModeOrig = SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
-    iEdgeColOrig  = SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
+    iEdgeModeOrig = ::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
+    iEdgeColOrig  = ::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
 
+    // Debug
+    // TCHAR szBuffer[100];
+    // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
+    // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - SAVE" ), MB_OK );
+
+    // Update menu
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
     if ( hMenu )
     {
-        CheckMenuItem( hMenu, funcItem[0]._cmdID, MF_CHECKED );
-        CheckMenuItem( hMenu, funcItem[1]._cmdID, MF_UNCHECKED );
+        ::CheckMenuItem( hMenu, funcItem[0]._cmdID, MF_CHECKED );
+        ::CheckMenuItem( hMenu, funcItem[1]._cmdID, MF_UNCHECKED );
     }
 }
 
@@ -150,11 +157,17 @@ void disColHi()
     ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, iEdgeModeOrig, 0 );
     ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, iEdgeColOrig, 0 );
 
-    HMENU hMenu = GetMenu( nppData._nppHandle );
+    // Debug
+    // TCHAR szBuffer[100];
+    // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
+    // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - RESET" ), MB_OK );
+
+    // Update menu
+    HMENU hMenu = ::GetMenu( nppData._nppHandle );
     if ( hMenu )
     {
-        CheckMenuItem( hMenu, funcItem[0]._cmdID, MF_UNCHECKED );
-        CheckMenuItem( hMenu, funcItem[1]._cmdID, MF_CHECKED );
+        ::CheckMenuItem( hMenu, funcItem[0]._cmdID, MF_UNCHECKED );
+        ::CheckMenuItem( hMenu, funcItem[1]._cmdID, MF_CHECKED );
     }
 }
 
