@@ -11,7 +11,7 @@
 #define VER_RELEASE	1
 #define VER_BUILD	1
 #define COMPANY_NAME	"Vin's World"
-#define FILE_VERSION	""
+#define FILE_VERSION	"1.0.1.1"
 #define FILE_DESCRIPTION	"Notepad++ Plugin to hightlight current column."
 #define INTERNAL_NAME	"Notepad++ Column Highlight"
 #define LEGAL_COPYRIGHT	"Copyright (C) VinsWorld. All Rights Reserved."
