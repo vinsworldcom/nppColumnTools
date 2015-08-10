@@ -74,8 +74,8 @@ void commandMenuInit()
     //            ShortcutKey *shortcut,          // optional. Define a shortcut to trigger this command
     //            bool check0nInit                // optional. Make this menu item be checked visually
     //            );
-    setCommand( 0, TEXT( "Enable" ), enColHi, NULL, false );
-    setCommand( 1, TEXT( "Disable" ), disColHi, NULL, true );
+    setCommand( 0, TEXT( "&Enable" ), enColHi, NULL, false );
+    setCommand( 1, TEXT( "&Disable" ), disColHi, NULL, true );
 }
 
 //
