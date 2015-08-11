@@ -18,12 +18,6 @@
 #ifndef PLUGINDEFINITION_H
 #define PLUGINDEFINITION_H
 
-#ifdef UNICODE
-  #define _UNICODE
-  #define UNICODE
-#endif
-
-
 //
 // All difinitions of plugin interface
 //
