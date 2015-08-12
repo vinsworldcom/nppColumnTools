@@ -37,17 +37,6 @@ int iEdgeColOrig;
 // It will be called while plugin loading
 void pluginInit( HANDLE hModule )
 {
-    // Save original edge properties
-    HWND hCurScintilla = getCurScintilla();
-    iEdgeModeOrig = ::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
-    iEdgeColOrig =  ::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
-
-    // Debug
-    // TCHAR szBuffer[100];
-    // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
-    // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - INIT" ), MB_OK );
-
-    disColHi();
 }
 
 //
