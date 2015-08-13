@@ -20,19 +20,17 @@ column marker, you "lose" it, but this plugin should remember the state on
 startup so when you disable the plugin, the original edge column marker state 
 should be returned.
 
-I did some experimenting with pluginInit() and the en/disColHi() functions 
-and ended up putting the logic in all places since I can't figure out when 
-pluginInit() is actually called.
-
-There will be bugs!
-
 
 CAVEATS
 
-When I have the NppExec console window open on the bottom and then close it, 
-I lose the windos tabs until I open a new window.
+I sometimes lose the document tabs until I use the menu or open a new window.  
+Probably due to me using SCN_PAINT event to update the location of the column 
+marker.
 
-This doesn't work with multiple views (Move / Clone to "Other View").
+I'm using this plugin on and off when I need to align text on multiple rows 
+using the vertical column highlight as a guide.  No major issues, but ...
+
+There could be bugs!
 
 
 DEPENDENCIES
