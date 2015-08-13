@@ -1,6 +1,6 @@
 [Project]
 FileName=NppColHighLight.dev
-Name=NppColHighLight
+Name=ColHighLight
 Type=3
 Ver=2
 ObjFiles=
@@ -19,7 +19,7 @@ ObjectOutput=
 LogOutput=
 LogOutputEnabled=0
 OverrideOutput=0
-OverrideOutputName=NppColHighLight.dll
+OverrideOutputName=ColHighLight.dll
 HostApplication=
 UseCustomMakefile=1
 CustomMakefile=Makefile
@@ -35,23 +35,23 @@ UnitCount=3
 Major=1
 Minor=0
 Release=1
-Build=1
+Build=2
 LanguageID=1033
 CharsetID=1252
 CompanyName=Vin's World
-FileVersion=1.0.1.1
+FileVersion=1.0.1.2
 FileDescription=Notepad++ Plugin to hightlight current column.
 InternalName=Notepad++ Column Highlight
 LegalCopyright=Copyright (C) VinsWorld. All Rights Reserved.
 LegalTrademarks=
 OriginalFilename=
 ProductName=NPPCOLHIGHLIGHT
-ProductVersion=1.0.1.1
+ProductVersion=1.0.1.2
 AutoIncBuildNr=1
 SyncProduct=1
 
 [Unit1]
-FileName=NppColHighLight.cpp
+FileName=ColHighLight.cpp
 CompileCpp=1
 Folder=
 Compile=1

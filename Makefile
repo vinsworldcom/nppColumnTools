@@ -1,13 +1,13 @@
 # Project: NppColHighLight
 # Makefile created by Dev-C++ 5.9.2
 
-PROJECT  = NppColHighLight
+PROJECT  = ColHighLight
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
 DLLRES   = $(PROJECT)_private.res
-OBJ      = NppColHighLight.o PluginDefinition.o $(DLLRES)
-LINKOBJ  = NppColHighLight.o PluginDefinition.o $(DLLRES)
+OBJ      = $(PROJECT).o PluginDefinition.o $(DLLRES)
+LINKOBJ  = $(PROJECT).o PluginDefinition.o $(DLLRES)
 LIBS     = -L"C:/strawberry/c/lib" -L"C:/strawberry/c/x86_64-w64-mingw32/lib" -static-libgcc
 INCS     = -I"C:/strawberry/c/include" -I"C:/strawberry/c/x86_64-w64-mingw32/include" -I"C:/strawberry/c/lib/gcc/x86_64-w64-mingw32/4.7.3/include"
 CXXINCS  = -I"C:/strawberry/c/include" -I"C:/strawberry/c/x86_64-w64-mingw32/include" -I"C:/strawberry/c/lib/gcc/x86_64-w64-mingw32/4.7.3/include" -I"C:/strawberry/c/lib/gcc/x86_64-w64-mingw32/4.7.3/include/c++"
@@ -28,8 +28,8 @@ clean: clean-custom
 $(BIN): $(LINKOBJ)
 	$(CPP) -shared $(LINKOBJ) -o $(BIN) $(LIBS) -municode -mthreads -Wl,-Bstatic,--output-def,$(DEF),--out-implib,$(STATIC),--add-stdcall-alias
 
-NppColHighLight.o: NppColHighLight.cpp
-	$(CPP) -c NppColHighLight.cpp -o NppColHighLight.o $(CXXFLAGS)
+$(PROJECT).o: $(PROJECT).cpp
+	$(CPP) -c $(PROJECT).cpp -o $(PROJECT).o $(CXXFLAGS)
 
 PluginDefinition.o: PluginDefinition.cpp
 	$(CPP) -c PluginDefinition.cpp -o PluginDefinition.o $(CXXFLAGS)
