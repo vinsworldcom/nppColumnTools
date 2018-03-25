@@ -5,6 +5,8 @@ PROJECT  = ColHighLight
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
+RM       = rm.exe -f
+
 DLLRES   = $(PROJECT)_private.res
 OBJ      = $(PROJECT).o PluginDefinition.o $(DLLRES)
 LINKOBJ  = $(PROJECT).o PluginDefinition.o $(DLLRES)
@@ -14,7 +16,6 @@ CXXINCS  = -I"C:/strawberry/c/include" -I"C:/strawberry/c/x86_64-w64-mingw32/inc
 BIN      = $(PROJECT).dll
 CXXFLAGS = $(CXXINCS) -Wall -g3 -DBUILDING_DLL=1 -DUNICODE 
 CFLAGS   = $(INCS) -Wall -g3 -DBUILDING_DLL=1 -DUNICODE 
-RM       = rm.exe -f
 DEF      = lib$(PROJECT).def
 STATIC   = lib$(PROJECT).a
 
