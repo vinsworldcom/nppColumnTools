@@ -1,4 +1,4 @@
-bin/ColHighLight.dll
+bin/ColHighlight.dll
 ColHighlight.cpp
 ColHighlight_private.h
 ColHighlight_private.rc

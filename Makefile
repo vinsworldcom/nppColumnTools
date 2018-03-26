@@ -1,12 +1,19 @@
-# Project: NppColHighLight
-# Makefile created by Dev-C++ 5.9.2
+PROJECT    = ColHighlight
 
-PROJECT    = ColHighLight
+SOURCES    = \
+$(PROJECT).cpp \
+PluginDefinition.cpp
+
+RESOURCES  = \
+$(PROJECT)_private.rc
 
 DEFINE     = -DBUILDING_DLL=1 -DUNICODE
-DLLRES     = $(PROJECT)_private.res
-OBJ        = $(PROJECT).o PluginDefinition.o $(DLLRES)
-LINKOBJ    = $(PROJECT).o PluginDefinition.o $(DLLRES)
+
+##########
+OBJECTS    = $(SOURCES:.cpp=.o)
+OBJRES     = $(PROJECT)_private.res
+OBJ        = $(OBJECTS) $(OBJRES)
+LINKOBJ    = $(OBJECTS) $(OBJRES)
 LIBS       = -static-libgcc
 INCS       = 
 CXXINCS    = 
@@ -43,14 +50,11 @@ clean: clean-custom
 $(BIN): $(LINKOBJ)
 	$(CPP) -shared $(LINKOBJ) -o $(BIN) $(LIBS) -municode -mthreads -Wl,-Bstatic,--output-def,$(DEF),--out-implib,$(STATIC),--add-stdcall-alias
 
-$(PROJECT).o: $(PROJECT).cpp
-	$(CPP) -c $(PROJECT).cpp -o $(PROJECT).o $(CXXFLAGS)
+%.o: %.cpp
+	$(CPP) -c $< -o $@ $(CXXFLAGS)
 
-PluginDefinition.o: PluginDefinition.cpp
-	$(CPP) -c PluginDefinition.cpp -o PluginDefinition.o $(CXXFLAGS)
-
-$(PROJECT)_private.res: $(PROJECT)_private.rc
-	$(WINDRES) -i $(PROJECT)_private.rc --input-format=rc -o $(PROJECT)_private.res -O coff
+$(OBJRES): $(RESOURCES)
+	$(WINDRES) -i $(RESOURCES) --input-format=rc -o $(OBJRES) -O coff
 
 ##########
 # Distribution
