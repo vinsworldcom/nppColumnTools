@@ -11,6 +11,7 @@ DEFINE     = -DBUILDING_DLL=1 -DUNICODE
 LIBS       = -static-libgcc
 INCS       = 
 
+# Remember to update MANIFEST if using RELEASEDIR                                                 
 RELEASEDIR = bin
 
 ##########
@@ -31,6 +32,7 @@ ifdef RELEASEDIR
 RELEASE    = $(RELEASEDIR)/$(BIN)
 endif
 
+##########
 SHELL      = cmd.exe
 ECHO       = echo
 NOECHO     = @
@@ -54,7 +56,11 @@ EXIST_D_   = exist
 NEXIST_D_  = not $(EXIST_D_)
 _EXIST_D   = 
 CONT       = &&
+LAST       =
+FORCPMAN   = for /f %%i in (MANIFEST) do $(DIST_CP) %%i $(DISTDIR)\%%i > nul
 ZIP        = zip -r
+
+-include Makefile.binsh
 
 .PHONY: all all-before all-after clean clean-custom
 
@@ -74,40 +80,49 @@ $(OBJRES): $(RESOURCES)
 
 ##########
 # Distribution
-realclean: clean distclean releaseclean
+REALCLEAN  = clean distclean
+ifdef RELEASEDIR
+release: $(RELEASE)
 
-distclean: distdirclean distfileclean
+REALCLEAN += releaseclean
 
 releaseclean:
 	$(NOECHO) $(IF) $(EXIST_D_) $(RELEASEDIR) $(_EXIST_D) \
 	    $(ECHO) $(RM_RF) $(RELEASEDIR) $(CONT) \
-		$(RM_RF) $(RELEASEDIR)
+		$(RM_RF) $(RELEASEDIR) $(LAST) \
 	$(ENDIF)
+
+endif
+realclean: $(REALCLEAN)
+
+distclean: distdirclean distfileclean
 
 distdirclean:
 	$(NOECHO) $(IF) $(EXIST_D_) $(DISTDIR) $(_EXIST_D) \
 	    $(ECHO) $(RM_RF) $(DISTDIR) $(CONT) \
-		$(RM_RF) $(DISTDIR)
+		$(RM_RF) $(DISTDIR) $(LAST) \
 	$(ENDIF)
 
 distfileclean:
 	$(NOECHO) $(IF) $(EXIST_F_) $(DISTNAME) $(_EXIST_F) \
 	    $(ECHO) $(RM_F) $(DISTNAME) $(CONT) \
-	    $(RM_F) $(DISTNAME)
+	    $(RM_F) $(DISTNAME) $(LAST) \
 	$(ENDIF)
 
-dist: manifest $(DISTNAME) distdirclean
+dist: manifest $(DISTNAME)
 
-$(DISTNAME): $(RELEASE)
+$(DISTDIR):
 	$(MKDIR) $(DISTDIR)
-	$(NOECHO) for /f %%i in (MANIFEST) do $(DIST_CP) %%i $(DISTDIR)\%%i > nul
+
+$(DISTNAME): $(RELEASE) | $(DISTDIR)
+	$(NOECHO) $(FORCPMAN)
 	$(ZIP) $(DISTNAME) $(DISTDIR)
 
-$(RELEASE): $(BIN) $(RELEASEDIR)
+$(RELEASE): $(BIN) | $(RELEASEDIR)
 	$(CP) $(BIN) $(RELEASEDIR)
 
 $(RELEASEDIR):
 	$(NOECHO) $(IF) $(NEXIST_D_) $(RELEASEDIR) $(_EXIST_D) \
 	    $(ECHO) $(MKDIR) $(RELEASEDIR) $(CONT) \
-	    $(MKDIR) $(RELEASEDIR)
+	    $(MKDIR) $(RELEASEDIR) $(LAST) \
 	$(ENDIF)
