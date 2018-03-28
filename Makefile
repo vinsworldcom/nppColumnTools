@@ -1,95 +1,113 @@
 PROJECT    = ColHighlight
 
 SOURCES    = \
-$(PROJECT).cpp \
-PluginDefinition.cpp
+  $(PROJECT).cpp \
+  PluginDefinition.cpp
 
 RESOURCES  = \
-$(PROJECT)_private.rc
+  $(PROJECT)_private.rc
 
 DEFINE     = -DBUILDING_DLL=1 -DUNICODE
+LIBS       = -static-libgcc
+INCS       = 
+
+RELEASEDIR = bin
 
 ##########
 OBJECTS    = $(SOURCES:.cpp=.o)
 OBJRES     = $(PROJECT)_private.res
-OBJ        = $(OBJECTS) $(OBJRES)
-LINKOBJ    = $(OBJECTS) $(OBJRES)
-LIBS       = -static-libgcc
-INCS       = 
-CXXINCS    = 
+OBJLINK    = $(OBJECTS) $(OBJRES)
 BIN        = $(PROJECT).dll
+
 CXXFLAGS   = $(CXXINCS) -Wall -g3 $(DEFINE)
-CFLAGS     = $(INCS) -Wall -g3 $(DEFINE)
+
 DEF        = lib$(PROJECT).def
 STATIC     = lib$(PROJECT).a
+
 DISTDIR    = $(PROJECT)
 DISTNAME   = $(PROJECT).zip
-RELEASEDIR = bin
-RELEASE    = $(RELEASEDIR)/$(PROJECT).dll
 
-CPP        = g++.exe
-CC         = gcc.exe
-WINDRES    = windres.exe
-RM_F       = rm -f
-MKDIR      = mkdir
-RM_RF      = rm -rf
-ZIP        = zip -r
-CP         = cp
-DIST_CP    = cp -r --parents
+ifdef RELEASEDIR
+RELEASE    = $(RELEASEDIR)/$(BIN)
+endif
 
+SHELL      = cmd.exe
 ECHO       = echo
 NOECHO     = @
+
+MAKE       = gmake.exe
+CC         = gcc.exe
+CXX        = g++.exe
+WINDRES    = windres.exe
+
+MKDIR      = mkdir
+RM_F       = del /q
+RM_RF      = rmdir /s/q
+CP         = copy /y
+DIST_CP    = echo f|xcopy /y
+IF         = if
+ENDIF      = 
+EXIST_F_   = exist
+NEXIST_F_  = not $(EXIST_F_)
+_EXIST_F   = 
+EXIST_D_   = exist
+NEXIST_D_  = not $(EXIST_D_)
+_EXIST_D   = 
+CONT       = &&
+ZIP        = zip -r
 
 .PHONY: all all-before all-after clean clean-custom
 
 all: all-before $(BIN) all-after
 
 clean: clean-custom
-	$(RM_F) $(OBJ) $(BIN) $(DEF) $(STATIC) $(PROJECT).layout
+	$(RM_F) $(OBJLINK) $(BIN) $(DEF) $(STATIC) $(PROJECT).layout
 
-$(BIN): $(LINKOBJ)
-	$(CPP) -shared $(LINKOBJ) -o $(BIN) $(LIBS) -municode -mthreads -Wl,-Bstatic,--output-def,$(DEF),--out-implib,$(STATIC),--add-stdcall-alias
+$(BIN): $(OBJLINK)
+	$(CXX) -shared $(OBJLINK) -o $(BIN) $(LIBS) -municode -mthreads -Wl,-Bstatic,--output-def,$(DEF),--out-implib,$(STATIC),--add-stdcall-alias
 
 %.o: %.cpp
-	$(CPP) -c $< -o $@ $(CXXFLAGS)
+	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 $(OBJRES): $(RESOURCES)
 	$(WINDRES) -i $(RESOURCES) --input-format=rc -o $(OBJRES) -O coff
 
 ##########
 # Distribution
-realclean: clean distclean
-	$(NOECHO) if [ -d $(RELEASEDIR) ]; then \
-	    $(ECHO) $(RM_RF) $(RELEASEDIR); \
-		$(RM_RF) $(RELEASEDIR); \
-	fi
+realclean: clean distclean releaseclean
 
 distclean: distdirclean distfileclean
 
+releaseclean:
+	$(NOECHO) $(IF) $(EXIST_D_) $(RELEASEDIR) $(_EXIST_D) \
+	    $(ECHO) $(RM_RF) $(RELEASEDIR) $(CONT) \
+		$(RM_RF) $(RELEASEDIR)
+	$(ENDIF)
+
 distdirclean:
-	$(NOECHO) if [ -d $(DISTDIR) ]; then \
-	    $(ECHO) $(RM_RF) $(DISTDIR); \
-		$(RM_RF) $(DISTDIR); \
-	fi
+	$(NOECHO) $(IF) $(EXIST_D_) $(DISTDIR) $(_EXIST_D) \
+	    $(ECHO) $(RM_RF) $(DISTDIR) $(CONT) \
+		$(RM_RF) $(DISTDIR)
+	$(ENDIF)
 
 distfileclean:
-	$(NOECHO) if [ -f $(DISTNAME) ]; then \
-	    $(ECHO) $(RM_F) $(DISTNAME); \
-	    $(RM_F) $(DISTNAME); \
-    fi
+	$(NOECHO) $(IF) $(EXIST_F_) $(DISTNAME) $(_EXIST_F) \
+	    $(ECHO) $(RM_F) $(DISTNAME) $(CONT) \
+	    $(RM_F) $(DISTNAME)
+	$(ENDIF)
 
 dist: manifest $(DISTNAME) distdirclean
 
 $(DISTNAME): $(RELEASE)
 	$(MKDIR) $(DISTDIR)
-	$(NOECHO) for i in `cat MANIFEST`; do $(DIST_CP) $${i} $(DISTDIR); done
+	$(NOECHO) for /f %%i in (MANIFEST) do $(DIST_CP) %%i $(DISTDIR)\%%i > nul
 	$(ZIP) $(DISTNAME) $(DISTDIR)
 
 $(RELEASE): $(BIN) $(RELEASEDIR)
 	$(CP) $(BIN) $(RELEASEDIR)
 
 $(RELEASEDIR):
-	$(NOECHO) if [ ! -d $(RELEASEDIR) ]; then \
-	    $(ECHO) $(MKDIR) $(RELEASEDIR); \
-	    $(MKDIR) $(RELEASEDIR); \
-	fi
+	$(NOECHO) $(IF) $(NEXIST_D_) $(RELEASEDIR) $(_EXIST_D) \
+	    $(ECHO) $(MKDIR) $(RELEASEDIR) $(CONT) \
+	    $(MKDIR) $(RELEASEDIR)
+	$(ENDIF)
