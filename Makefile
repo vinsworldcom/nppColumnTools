@@ -1,64 +1,68 @@
-PROJECT    = ColHighlight
+PROJECT       = ColHighlight
+SRCEXT        = cpp
+BINEXT        = dll
 
-SOURCES    = \
-  $(PROJECT).cpp \
+SOURCES       = \
+  $(PROJECT).$(SRCEXT) \
   PluginDefinition.cpp
 
-RESOURCES  = \
+RESOURCES     = \
   $(PROJECT)_private.rc
 
-DEFINE     = -DBUILDING_DLL=1 -DUNICODE
-LIBS       = -static-libgcc
-INCS       = 
+# Additional source types: $(TYPESRC:.type=.o)
+#TYPESRC      = file.type
+PREOBJS       = 
+POSTOBJS      = 
+CLEAN-CUSTOM  = clean-cxxdll
 
-# Remember to update MANIFEST if using RELEASEDIR                                                 
-RELEASEDIR = bin
+DEFINE        = -DUNICODE
+FLAGS         = -Wall -g3
+INCS          = 
+LIBS          = -static-libgcc -municode -mthreads
 
-##########
-OBJECTS    = $(SOURCES:.cpp=.o)
-OBJRES     = $(PROJECT)_private.res
-OBJLINK    = $(OBJECTS) $(OBJRES)
-BIN        = $(PROJECT).dll
+# Remember to update MANIFEST if using RELEASEDIR
+RELEASEDIR    = bin
 
-CXXFLAGS   = $(CXXINCS) -Wall -g3 $(DEFINE)
+########################################
+OBJECTS       = $(PREOBJS) $(SOURCES:.$(SRCEXT)=.o) $(POSTOBJS)
+OBJRES        = $(RESOURCES:.rc=.res)
+OBJLINK       = $(OBJECTS) $(OBJRES)
+BIN           = $(PROJECT).$(BINEXT)
 
-DEF        = lib$(PROJECT).def
-STATIC     = lib$(PROJECT).a
-
-DISTDIR    = $(PROJECT)
-DISTNAME   = $(PROJECT).zip
+DISTDIR       = $(PROJECT)
+DISTNAME      = $(PROJECT).zip
 
 ifdef RELEASEDIR
-RELEASE    = $(RELEASEDIR)/$(BIN)
+RELEASE      += $(RELEASEDIR)\$(BIN)
 endif
 
 ##########
-SHELL      = cmd.exe
-ECHO       = echo
-NOECHO     = @
+SHELL         = cmd.exe
+ECHO          = echo
+NOECHO        = @
 
-MAKE       = gmake.exe
-CC         = gcc.exe
-CXX        = g++.exe
-WINDRES    = windres.exe
+MAKE          = gmake.exe
+CC            = gcc.exe
+CXX           = g++.exe
+WINDRES       = windres.exe
 
-MKDIR      = mkdir
-RM_F       = del /q
-RM_RF      = rmdir /s/q
-CP         = copy /y
-DIST_CP    = echo f|xcopy /y
-IF         = if
-ENDIF      = 
-EXIST_F_   = exist
-NEXIST_F_  = not $(EXIST_F_)
-_EXIST_F   = 
-EXIST_D_   = exist
-NEXIST_D_  = not $(EXIST_D_)
-_EXIST_D   = 
-CONT       = &&
-LAST       =
-FORCPMAN   = for /f %%i in (MANIFEST) do $(DIST_CP) %%i $(DISTDIR)\%%i > nul
-ZIP        = zip -r
+MKDIR         = mkdir
+RM_F          = del /q
+RM_RF         = rmdir /s/q
+CP            = copy /y
+DIST_CP       = echo f|xcopy /y
+IF            = if
+ENDIF         = 
+EXIST_F_      = exist
+NEXIST_F_     = not $(EXIST_F_)
+_EXIST_F      = 
+EXIST_D_      = exist
+NEXIST_D_     = not $(EXIST_D_)
+_EXIST_D      = 
+CONT          = &&
+LAST          =
+FORCPMAN      = for /f %%i in (MANIFEST) do $(DIST_CP) %%i $(DISTDIR)\%%i > nul
+ZIP           = zip -r
 
 -include Makefile.binsh
 
@@ -66,25 +70,21 @@ ZIP        = zip -r
 
 all: all-before $(BIN) all-after
 
+clean-custom: $(CLEAN-CUSTOM)
+
 clean: clean-custom
-	$(RM_F) $(OBJLINK) $(BIN) $(DEF) $(STATIC) $(PROJECT).layout
-
-$(BIN): $(OBJLINK)
-	$(CXX) -shared $(OBJLINK) -o $(BIN) $(LIBS) -municode -mthreads -Wl,-Bstatic,--output-def,$(DEF),--out-implib,$(STATIC),--add-stdcall-alias
-
-%.o: %.cpp
-	$(CXX) -c $< -o $@ $(CXXFLAGS)
+	$(RM_F) $(OBJLINK) $(BIN) $(PROJECT).layout *.orig *.bak
 
 $(OBJRES): $(RESOURCES)
 	$(WINDRES) -i $(RESOURCES) --input-format=rc -o $(OBJRES) -O coff
 
 ##########
 # Distribution
-REALCLEAN  = clean distclean
+REALCLEAN     = clean distclean
 ifdef RELEASEDIR
 release: $(RELEASE)
 
-REALCLEAN += releaseclean
+REALCLEAN    += releaseclean
 
 releaseclean:
 	$(NOECHO) $(IF) $(EXIST_D_) $(RELEASEDIR) $(_EXIST_D) \
@@ -126,3 +126,31 @@ $(RELEASEDIR):
 	    $(ECHO) $(MKDIR) $(RELEASEDIR) $(CONT) \
 	    $(MKDIR) $(RELEASEDIR) $(LAST) \
 	$(ENDIF)
+
+# Additional Tools
+
+# Additional targets
+##########
+# C++ .dll
+DLLWRAP       = dllwrap.exe
+
+CXXLINKOPTS   = -Bstatic
+DEFINE       += -DBUILDING_DLL=1
+
+CXXDEFFILE    = lib$(PROJECT).def
+CXXSTATICLIB  = lib$(PROJECT).a
+
+$(BIN): $(OBJLINK)
+	$(CXX) -shared $(OBJLINK) -o $(BIN) $(LIBS) -Wl,$(CXXLINKOPTS),--output-def,$(CXXDEFFILE),--out-implib,$(CXXSTATICLIB),--add-stdcall-alias
+#	$(DLLWRAP) --output-def $(CXXDEFFILE) --implib $(CXXSTATICLIB) $(OBJLINK) $(LIBS) --add-stdcall-alias -o $(BIN)
+
+clean-cxxdll:
+	$(RM_F) $(CXXDEFFILE) $(CXXSTATICLIB)
+
+##########
+# C++
+CXXFLAGS      = $(INCS) $(FLAGS) $(DEFINE)
+
+%.o: %.cpp
+	$(CXX) -c $< -o $@ $(CXXFLAGS)
+
