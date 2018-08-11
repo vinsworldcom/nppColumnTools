@@ -1,42 +1,41 @@
 PROJECT       = ColHighlight
-SRCEXT        = cpp
-BINEXT        = dll
 
-SOURCES       = \
-  $(PROJECT).$(SRCEXT) \
-  PluginDefinition.cpp
+CEXE          = 
+CDLL          =
+CXXEXE        =
+CXXDLL        = $(PROJECT).dll
 
-RESOURCES     = \
-  $(PROJECT)_private.rc
+##########
+# Virtual paths and helpers, dir names (no trailing slash)
+VPATH = 
+#vpath $.c src
+#vpath %.h include
 
-# Additional source types: $(TYPESRC:.type=.o)
-#TYPESRC      = file.type
-PREOBJS       = 
-POSTOBJS      = 
-CLEAN-CUSTOM  = clean-cxxdll
+##########
+# directory names (no trailing slash) containing Makefile(s) to execute
+RECURMAKEDIRS = 
 
-DEFINE        = -DUNICODE
-FLAGS         = -Wall -g3
-INCS          = 
-LIBS          = -static-libgcc -municode -mthreads
-
+##########
 # Remember to update MANIFEST if using RELEASEDIR
 RELEASEDIR    = bin
 
 ########################################
-OBJECTS       = $(PREOBJS) $(SOURCES:.$(SRCEXT)=.o) $(POSTOBJS)
-OBJRES        = $(RESOURCES:.rc=.res)
-OBJLINK       = $(OBJECTS) $(OBJRES)
-BIN           = $(PROJECT).$(BINEXT)
-
-DISTDIR       = $(PROJECT)
-DISTNAME      = $(PROJECT).zip
-
 ifdef RELEASEDIR
-RELEASE      += $(RELEASEDIR)\$(BIN)
+RELEASE      += $(RELEASEDIR)\$(CDLL)
+RELEASE      += $(RELEASEDIR)\$(CEXE)
+RELEASE      += $(RELEASEDIR)\$(CXXDLL)
+RELEASE      += $(RELEASEDIR)\$(CXXEXE)
 endif
 
+BIN           = $(CDLL) $(CEXE) $(CXXDLL) $(CXXEXE)
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
 ##########
+# Tools
+########################################
 SHELL         = cmd.exe
 ECHO          = echo
 NOECHO        = @
@@ -45,7 +44,9 @@ MAKE          = gmake.exe
 CC            = gcc.exe
 CXX           = g++.exe
 WINDRES       = windres.exe
+DLLWRAP       = dllwrap.exe
 
+CAT           = type
 MKDIR         = mkdir
 RM_F          = del /q
 RM_RF         = rmdir /s/q
@@ -62,24 +63,87 @@ _EXIST_D      =
 CONT          = &&
 LAST          =
 FORCPMAN      = for /f %%i in (MANIFEST) do $(DIST_CP) %%i $(DISTDIR)\%%i > nul
+FORCPREL      = for %%i in ($(BIN)) do $(CP) %%i $(RELEASEDIR)
 ZIP           = zip -r
 
--include Makefile.binsh
+FORRECURSMAKE = @for %%i in ($(RECURMAKEDIRS)) do @$(MAKE) --directory=%%i $(TARGET)
+FORRECURSCLEAN= @for %%i in ($(RECURMAKEDIRS)) do @$(MAKE) --directory=%%i clean
 
-.PHONY: all all-before all-after clean clean-custom
+makefile:
+	$(NOECHO) $(CAT) Makefile_* > Makefile
 
-all: all-before $(BIN) all-after
+ifdef RECURMAKEDIRS
+recursivemake:
+	$(FORRECURSMAKE)
+
+clean-recursivemake:
+	$(FORRECURSCLEAN)
+
+CLEAN-CUSTOM += clean-recursivemake
+endif
+
+##########
+# Resources
+RESOURCES     = \
+  $(PROJECT)_private.rc
+
+RINCS         = 
+
+########################################
+OBJRES        = $(RESOURCES:.rc=.res)
+
+%.res: %.rc
+	$(WINDRES) -i $< --input-format=rc -o $@ -O coff $(RINCS)
+
+##########
+# C++
+CXXSOURCES    = \
+  $(PROJECT).cpp \
+  PluginDefinition.cpp \
+
+CXXDEFINE     = -DUNICODE
+CXXFLAGS      = -Wall
+CXXINCS       = 
+
+########################################
+CXXOPTS       = $(CXXINCS) $(CXXFLAGS) $(CXXDEFINE)
+
+%.o: %.cpp
+	$(CXX) -c $< -o $@ $(CXXOPTS)
+
+##########
+# C++ .dll
+CXXDLIBS      = -s
+CXXDLOPTS     = --subsystem,windows
+
+########################################
+CXXDOBJECTS   = $(PREOBJS) $(CXXSOURCES:.cpp=.o) $(POSTOBJS)
+CXXDOBJLINK   = $(CXXDOBJECTS) $(OBJRES)
+CXXDEFFILE    = lib$(PROJECT).def
+CXXSTATICLIB  = lib$(PROJECT).a
+CLEAN-CUSTOM += clean-cxxdll
+
+##########
+$(CXXDLL): $(CXXDOBJLINK)
+	$(CXX) -shared $(CXXDOBJLINK) -o $(CXXDLL) $(CXXDLIBS) -Wl,$(CXXDLOPTS),--output-def,$(CXXDEFFILE),--out-implib,$(CXXSTATICLIB)
+#	$(DLLWRAP) --output-def $(CXXDEFFILE) --implib $(CXXSTATICLIB) $(CXXDOBJLINK) $(CXXDLIBS) --add-stdcall-alias -o $(CXXDLL)
+
+clean-cxxdll:
+	$(RM_F) $(CXXDLL) $(CXXDOBJLINK) $(CXXDEFFILE) $(CXXSTATICLIB)
+
+##########
+# Disttribution / Clean
+########################################
+DISTDIR       = $(PROJECT)
+DISTNAME      = $(PROJECT).zip
 
 clean-custom: $(CLEAN-CUSTOM)
 
 clean: clean-custom
-	$(RM_F) $(OBJLINK) $(BIN) $(PROJECT).layout *.orig *.bak
-
-$(OBJRES): $(RESOURCES)
-	$(WINDRES) -i $(RESOURCES) --input-format=rc -o $(OBJRES) -O coff
+	$(RM_F) $(PROJECT).layout *.orig *.bak
 
 ##########
-# Distribution
+# Clean / Dist
 REALCLEAN     = clean distclean
 ifdef RELEASEDIR
 release: $(RELEASE)
@@ -119,38 +183,11 @@ $(DISTNAME): $(RELEASE) | $(DISTDIR)
 	$(ZIP) $(DISTNAME) $(DISTDIR)
 
 $(RELEASE): $(BIN) | $(RELEASEDIR)
-	$(CP) $(BIN) $(RELEASEDIR)
+	$(NOECHO) $(FORCPREL)
 
 $(RELEASEDIR):
 	$(NOECHO) $(IF) $(NEXIST_D_) $(RELEASEDIR) $(_EXIST_D) \
 	    $(ECHO) $(MKDIR) $(RELEASEDIR) $(CONT) \
 	    $(MKDIR) $(RELEASEDIR) $(LAST) \
 	$(ENDIF)
-
-# Additional Tools
-
-# Additional targets
-##########
-# C++ .dll
-DLLWRAP       = dllwrap.exe
-
-CXXLINKOPTS   = -Bstatic
-DEFINE       += -DBUILDING_DLL=1
-
-CXXDEFFILE    = lib$(PROJECT).def
-CXXSTATICLIB  = lib$(PROJECT).a
-
-$(BIN): $(OBJLINK)
-	$(CXX) -shared $(OBJLINK) -o $(BIN) $(LIBS) -Wl,$(CXXLINKOPTS),--output-def,$(CXXDEFFILE),--out-implib,$(CXXSTATICLIB),--add-stdcall-alias
-#	$(DLLWRAP) --output-def $(CXXDEFFILE) --implib $(CXXSTATICLIB) $(OBJLINK) $(LIBS) --add-stdcall-alias -o $(BIN)
-
-clean-cxxdll:
-	$(RM_F) $(CXXDEFFILE) $(CXXSTATICLIB)
-
-##########
-# C++
-CXXFLAGS      = $(INCS) $(FLAGS) $(DEFINE)
-
-%.o: %.cpp
-	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
