@@ -35,17 +35,16 @@ There could be bugs!
 
 DEPENDENCIES
 
-The Makefile is written for gmake.exe from the MinGW distribution.  There 
-is a Dev-Cpp project file (.dev) included.
+The Makefile is written for gmake.exe from the MinGW distribution.
 
-I compiled with the MinGW released with Strawberry Perl version:
+I've compiled it fine, but needed to statically include glibc so I could 
+change my C compiler in my path.  This leads to a much larger DLL.
 
-This is perl 5, version 18, subversion 1 (v5.18.1) built for 
-MSWin32-x86-multi-thread-64int
+I compiled with MS Visual Studio Community 2017 and this seems to work 
+OK.
 
-g++ (release with patches / build 20130526 by strawberryperl.com) 4.7.3
+[x86 Native Tools Command Prompt for VS 2017]
+Configuration=Release
+Platform=Win32
 
-  - I need to compile as 32-bit to match my Notepad++ install
-  - I have UNICODE enabled to match my Notepad++ install
-  
-You can edit the Makefile to suit your needs.
+  msbuild
