@@ -72,6 +72,8 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 //
 HWND getCurScintilla();
 void setColHi();
+void enColHi();
+void disColHi();
 void highlight();
 void ruler();
 
