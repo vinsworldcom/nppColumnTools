@@ -102,7 +102,7 @@ CXXSOURCES    = \
   PluginDefinition.cpp \
 
 CXXDEFINE     = -DUNICODE
-CXXFLAGS      = -Wall
+CXXFLAGS      = -Wall -g3
 CXXINCS       = 
 
 ########################################
@@ -113,8 +113,8 @@ CXXOPTS       = $(CXXINCS) $(CXXFLAGS) $(CXXDEFINE)
 
 ##########
 # C++ .dll
-CXXDLIBS      = -s
-CXXDLOPTS     = --subsystem,windows
+CXXDLIBS      = -s -static-libgcc
+CXXDLOPTS     = --subsystem,windows,-Bstatic
 
 ########################################
 CXXDOBJECTS   = $(PREOBJS) $(CXXSOURCES:.cpp=.o) $(POSTOBJS)
