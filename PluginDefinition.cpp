@@ -64,8 +64,8 @@ void commandMenuInit()
     //            ShortcutKey *shortcut,          // optional. Define a shortcut to trigger this command
     //            bool check0nInit                // optional. Make this menu item be checked visually
     //            );
-    setCommand( 0, TEXT( "Column &highlight" ), highlight, NULL, true );
-    setCommand( 1, TEXT( "Column &ruler" ), ruler, NULL, true );
+    setCommand( 0, TEXT( "Column highlight" ), highlight, NULL, true );
+    setCommand( 1, TEXT( "Column ruler" ), ruler, NULL, true );
 }
 
 //
@@ -111,13 +111,19 @@ HWND getCurScintilla()
 
 void highlight()
 {
-    UINT state = ::GetMenuState(::GetMenu(nppData._nppHandle), funcItem[0]._cmdID, MF_BYCOMMAND);
+    HMENU hMenu = ::GetMenu( nppData._nppHandle );
+    UINT state = ::GetMenuState(hMenu, funcItem[0]._cmdID, MF_BYCOMMAND);
     if (state & MF_CHECKED)
+    {
         disColHi();
+        ::CheckMenuItem(hMenu, funcItem[0]._cmdID, MF_BYCOMMAND | MF_UNCHECKED);
+    }
     else
+    {
         enColHi();
-
-    ::SendMessage(nppData._nppHandle, NPPM_SETMENUITEMCHECK, funcItem[0]._cmdID, !(state & MF_CHECKED));
+        ::CheckMenuItem(hMenu, funcItem[0]._cmdID, MF_BYCOMMAND | MF_CHECKED);
+    }
+//    ::SendMessage(nppData._nppHandle, NPPM_SETMENUITEMCHECK, funcItem[0]._cmdID, !(state & MF_CHECKED));
 }
 
 void enColHi()
@@ -138,9 +144,9 @@ void enColHi()
     // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - SAVE" ), MB_OK );
 
     // Update menu
-    HMENU hMenu = ::GetMenu( nppData._nppHandle );
+/*     HMENU hMenu = ::GetMenu( nppData._nppHandle );
     if ( hMenu )
-        ::CheckMenuItem( hMenu, funcItem[0]._cmdID, MF_CHECKED );
+        ::CheckMenuItem( hMenu, funcItem[0]._cmdID, MF_BYCOMMAND | MF_CHECKED ); */
 }
 
 void disColHi()
@@ -168,9 +174,9 @@ void disColHi()
     // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - RESET" ), MB_OK );
 
     // Update menu
-    HMENU hMenu = ::GetMenu( nppData._nppHandle );
+/*     HMENU hMenu = ::GetMenu( nppData._nppHandle );
     if ( hMenu )
-        ::CheckMenuItem( hMenu, funcItem[0]._cmdID, MF_UNCHECKED );
+        ::CheckMenuItem( hMenu, funcItem[0]._cmdID, MF_BYCOMMAND | MF_UNCHECKED ); */
 }
 
 void setColHi()
@@ -188,12 +194,15 @@ void ruler()
 {
     HWND hCurScintilla = getCurScintilla();
 
-    UINT state = ::GetMenuState(::GetMenu(nppData._nppHandle), funcItem[1]._cmdID, MF_BYCOMMAND);
+    HMENU hMenu = ::GetMenu( nppData._nppHandle );
+    UINT state = ::GetMenuState(hMenu, funcItem[1]._cmdID, MF_BYCOMMAND);
     if (state & MF_CHECKED)
     {
         g_isActiveRul = false;
         
         ::SendMessage(hCurScintilla, SCI_ANNOTATIONCLEARALL, 0, 0);
+
+        ::CheckMenuItem(hMenu, funcItem[1]._cmdID, MF_BYCOMMAND | MF_UNCHECKED);
     }
     // Enable
     else
@@ -216,7 +225,9 @@ void ruler()
          */
         ::SendMessage(hCurScintilla, SCI_ANNOTATIONSETSTYLE, lin, STYLE_CALLTIP);
         ::SendMessage(hCurScintilla, SCI_ANNOTATIONSETVISIBLE, lin, 0);
+
+        ::CheckMenuItem(hMenu, funcItem[1]._cmdID, MF_BYCOMMAND | MF_CHECKED);
     }
 
-    ::SendMessage(nppData._nppHandle, NPPM_SETMENUITEMCHECK, funcItem[1]._cmdID, !(state & MF_CHECKED));
+//    ::SendMessage(nppData._nppHandle, NPPM_SETMENUITEMCHECK, funcItem[1]._cmdID, !(state & MF_CHECKED));
 }
