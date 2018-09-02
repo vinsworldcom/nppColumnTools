@@ -35,7 +35,7 @@ There could be bugs!
 
 DEPENDENCIES
 
-The Makefile is written for gmake.exe from the MinGW distribution.
+There was a Makefile written for gmake.exe from the MinGW distribution.
 
 I've compiled it fine, but needed to statically include glibc so I could 
 change my C compiler in my path.  This leads to a much larger DLL.
