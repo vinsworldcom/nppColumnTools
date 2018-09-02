@@ -76,5 +76,6 @@ void enColHi();
 void disColHi();
 void highlight();
 void ruler();
+void setRuler();
 
 #endif //PLUGINDEFINITION_H
