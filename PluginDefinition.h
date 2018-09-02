@@ -74,5 +74,7 @@ HWND getCurScintilla();
 void setColHi();
 void enColHi();
 void disColHi();
+void highlight();
+void ruler();
 
 #endif //PLUGINDEFINITION_H

@@ -20,7 +20,7 @@
 extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
 
-extern bool isActive;
+extern bool g_isActiveHi;
 
 BOOL APIENTRY DllMain( HANDLE hModule,
                        DWORD  reasonForCall,
@@ -71,7 +71,7 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
     {
         case SCN_PAINTED:
         {
-            if ( isActive )
+            if ( g_isActiveHi )
                 setColHi();
         }
         break;
