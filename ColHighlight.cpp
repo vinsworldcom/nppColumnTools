@@ -22,6 +22,7 @@ extern NppData nppData;
 
 extern bool g_isActiveHi;
 extern bool g_isActiveRul;
+extern bool g_isLockRul;
 
 BOOL APIENTRY DllMain( HANDLE hModule,
                        DWORD  reasonForCall,
@@ -74,7 +75,7 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
         {
             if ( g_isActiveHi )
                 setColHi();
-            if ( g_isActiveRul )
+            if ( g_isActiveRul && g_isLockRul )
                 setRuler();
         }
         break;

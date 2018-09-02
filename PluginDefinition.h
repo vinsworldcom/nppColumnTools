@@ -36,7 +36,7 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("Column &Highlight");
 //
 // Here define the number of your plugin commands
 //
-const int nbFunc = 2;
+const int nbFunc = 4;
 
 
 //
@@ -71,11 +71,12 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 // Your plugin command functions
 //
 HWND getCurScintilla();
-void setColHi();
+void highlight();
 void enColHi();
 void disColHi();
-void highlight();
+void setColHi();
 void ruler();
+void lockRuler();
 void setRuler();
 
 #endif //PLUGINDEFINITION_H
