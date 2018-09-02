@@ -199,26 +199,36 @@ void ruler()
     {
         g_isActiveRul = true;
 
-        int pos = ::SendMessage( hCurScintilla, SCI_GETCURRENTPOS, 0, 0 );
-        int lin = ::SendMessage( hCurScintilla, SCI_LINEFROMPOSITION, pos, 0 );
-
-        ::SendMessage( hCurScintilla, SCI_ANNOTATIONSETTEXT, lin,
-                       ( LPARAM )
-                       "--- 0 ---|--- 10---|--- 20---|--- 30---|--- 40---|--- 50---|--- 60---|--- 70---|--- 80---|--- 90---|---100---|---110---|---120---|---130---|---140---|---150---|---160---|---170---|---180---|---190---|\n\
-123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|" );
-        /**
-         * #define STYLE_DEFAULT 32
-         * #define STYLE_LINENUMBER 33
-         * #define STYLE_BRACELIGHT 34
-         * #define STYLE_BRACEBAD 35
-         * #define STYLE_CONTROLCHAR 36
-         * #define STYLE_INDENTGUIDE 37
-         * #define STYLE_CALLTNIP 38
-         */
-        ::SendMessage( hCurScintilla, SCI_ANNOTATIONSETSTYLE, lin, STYLE_CALLTIP );
-        ::SendMessage( hCurScintilla, SCI_ANNOTATIONSETVISIBLE, lin, 0 );
+        setRuler();
     }
 
     ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                    funcItem[1]._cmdID, !( state & MF_CHECKED ) );
+}
+
+void setRuler()
+{
+    HWND hCurScintilla = getCurScintilla();
+
+    // int pos = ::SendMessage( hCurScintilla, SCI_GETCURRENTPOS, 0, 0 );
+    // int lin = ::SendMessage( hCurScintilla, SCI_LINEFROMPOSITION, pos, 0 );
+
+    ::SendMessage( hCurScintilla, SCI_ANNOTATIONCLEARALL, 0, 0 );
+    int lin = ::SendMessage( hCurScintilla, SCI_GETFIRSTVISIBLELINE , 0, 0 );
+
+    ::SendMessage( hCurScintilla, SCI_ANNOTATIONSETTEXT, lin,
+                   ( LPARAM )
+                   "--- 0 ---|--- 10---|--- 20---|--- 30---|--- 40---|--- 50---|--- 60---|--- 70---|--- 80---|--- 90---|---100---|---110---|---120---|---130---|---140---|---150---|---160---|---170---|---180---|---190---|\n\
+123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|" );
+    /**
+     * #define STYLE_DEFAULT 32
+     * #define STYLE_LINENUMBER 33
+     * #define STYLE_BRACELIGHT 34
+     * #define STYLE_BRACEBAD 35
+     * #define STYLE_CONTROLCHAR 36
+     * #define STYLE_INDENTGUIDE 37
+     * #define STYLE_CALLTNIP 38
+     */
+    ::SendMessage( hCurScintilla, SCI_ANNOTATIONSETSTYLE, lin, STYLE_LINENUMBER );
+    ::SendMessage( hCurScintilla, SCI_ANNOTATIONSETVISIBLE, lin, 0 );
 }
