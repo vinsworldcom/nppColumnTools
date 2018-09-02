@@ -76,7 +76,7 @@ void commandMenuInit()
                 false );
     setCommand( MENU_RULER,      TEXT( "Column &ruler" ),      ruler, NULL,
                 false );
-    setCommand( MENU_LOCKRULER,  TEXT( "&Lock ruler at top" ), lockRuler, NULL,
+    setCommand( MENU_LOCKRULER,  TEXT( "Lock ruler at &top" ), lockRuler, NULL,
                 true );
 }
 
