@@ -1,6 +1,6 @@
 NAME
 
-Notepad++ Highlight Current Column
+Notepad++ Column Tools
 Author:  Michael J. Vincent
 
 
@@ -8,11 +8,16 @@ DESCRIPTION
 
 This Notepad++ plugin provides highlighting of the current column in the 
 same way the "Settings" -> "Preferences" -> "Editing" -> "Enable current 
-line highlightig" option provides highlighting of the current line.
+line highlighting" option provides highlighting of the current line.  It 
+also provides a "ruler" showing column numbers much the same as line 
+numbers from "Settings" -> "Preferences" -> "Editing" -> "Display line 
+number".
 
-This is more of a proof of concept.  I wrote this in about 8 hours while 
-looking at the demo plugin, the Scintilla documentation, other examples of 
-working plugins and my little (to almost non-existent) experience with C/C++.  
+This was more of a proof of concept.  I wrote the column highlighting in 
+about 8 hours while looking at the demo plugin, the Scintilla documentation, 
+other examples of working plugins and my little (to almost non-existent) 
+experience with C/C++.  Since then, I've improved by "borrowing" others' 
+code I've found to increase functionality.
 
 To be fair, this plugin doesn't really "highlight" the current column; rather, 
 uses the edge column marker to do the job.  Thus, if you're using the edge 
