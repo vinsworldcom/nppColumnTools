@@ -82,8 +82,8 @@ HorizontalRuler::~HorizontalRuler()
                                    nBuf );
 
 
-    Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ), TEXT( "Visible" ),
-                                   this->enable );
+    Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ), 
+                                   TEXT( "Visible" ), this->enable );
 }
 
 void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
@@ -100,15 +100,15 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
                  ( LPARAM )configDir );
 
     Ini::getInstance()->setIniPath( configDir );
-    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "FontSize" ),
-                                  buf, MAX_PATH );
+    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), 
+                                  TEXT( "FontSize" ), buf, MAX_PATH );
     nBuf = _ttoi( buf );
 
     if ( nBuf != 0 )
         this->nFontSize = nBuf;
 
-    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "Fix" ), buf,
-                                  MAX_PATH );
+    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "Fix" ), 
+                                  buf, MAX_PATH );
     nBuf = _ttoi( buf );
 
     if ( nBuf != 0 )
@@ -149,7 +149,8 @@ void HorizontalRuler::GetInitPos()
     GetClientRect( this->tabHwnd, &tabClientRc );
 
     if ( !::SendMessage( this->nppHwnd, NPPM_ISTABBARHIDDEN, 0, 0 ) )
-        SendMessage( this->tabHwnd, TCM_ADJUSTRECT, FALSE, ( LPARAM )&tabClientRc );
+        SendMessage( this->tabHwnd, TCM_ADJUSTRECT, FALSE, 
+                     ( LPARAM )&tabClientRc );
 
     //Scintilla?Tab??????????????Npp??????????
     MapWindowPoints( HWND_DESKTOP, this->nppHwnd, ( LPPOINT )&rc, 2 );
@@ -240,8 +241,8 @@ void HorizontalRuler::GetRuleArea()
     if ( this->bFontFix == true )
         this->nCharHeight = abs( logFont.lfHeight );
     else
-        this->nCharHeight = ( int )SendMessage( this->scintillaHwnd, SCI_TEXTHEIGHT,
-                                                0, 0 );
+        this->nCharHeight = ( int )SendMessage( this->scintillaHwnd, 
+                                                SCI_TEXTHEIGHT, 0, 0 );
 
     this->nTopMargin = ( int )( nCharHeight * 1.5f );
 
@@ -322,8 +323,8 @@ void HorizontalRuler::PaintRuler()
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol );
             SetBkMode( hDC, TRANSPARENT );
-            ExtTextOut( hDC, nRulerStartX + 1, rc.top, ETO_CLIPPED, &rc, sColumNumber,
-                        nLength, 0 );
+            ExtTextOut( hDC, nRulerStartX + 1, rc.top, ETO_CLIPPED, &rc, 
+                        sColumNumber, nLength, 0 );
 
             MoveToEx( hDC, nRulerStartX, rc.top, NULL );
             LineTo( hDC, nRulerStartX, rc.top + this->nTopMargin );
@@ -354,8 +355,8 @@ void HorizontalRuler::PaintRuler()
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol + i );
             SetBkMode( hDC, TRANSPARENT );
-            ExtTextOut( hDC, tmp + 1, rc.top, ETO_CLIPPED, &rc, sColumNumber, nLength,
-                        0 );
+            ExtTextOut( hDC, tmp + 1, rc.top, ETO_CLIPPED, &rc, sColumNumber, 
+                        nLength, 0 );
             //TextOut(hDC, tmp+1, rc.top, sColumNumber, nLength);
 
             MoveToEx( hDC, tmp, rc.top, NULL );
@@ -468,8 +469,8 @@ int HorizontalRuler::EdgeLine( int x, int y )
                            this->nMarginWidth ) ) / this->nCharWidth;
     nNowEdgeLine = ( int )SendMessage( this->scintillaHwnd, SCI_GETEDGECOLUMN,
                                        0, 0 );
-    nEdgeLineMode = ( int )SendMessage( this->scintillaHwnd, SCI_GETEDGEMODE, 0,
-                                        0 );
+    nEdgeLineMode = ( int )SendMessage( this->scintillaHwnd, SCI_GETEDGEMODE, 
+                                        0, 0 );
 
     if ( ( nNowEdgeLine != nSetEdgeLine ) || ( nEdgeLineMode == EDGE_NONE ) )
     {
