@@ -125,7 +125,8 @@ LRESULT CALLBACK RulerMainWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
         case WM_NCHITTEST:
             if ( mainHRuler.IsInit() )
             {
-                if ( mainHRuler.HitDrawArea( LOWORD( lParam ), HIWORD( lParam ) ) )
+                if ( mainHRuler.HitDrawArea( LOWORD( lParam ), 
+                     HIWORD( lParam ) ) )
                     return HTBORDER;
             }
 

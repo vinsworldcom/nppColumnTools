@@ -66,11 +66,11 @@ void commandMenuInit()
     //            );
     setCommand( MENU_ENABLE,     TEXT( "&Enable" ),           enableAll, NULL,
                 false );
-    setCommand( MENU_SEPARATOR1, TEXT( "-SEPARATOR-" ),       NULL, NULL,
+    setCommand( MENU_SEPARATOR1, TEXT( "-SEPARATOR-" ),       NULL,      NULL,
                 false );
     setCommand( MENU_HIGHLIGHT,  TEXT( "Column &highlight" ), highlight, NULL,
                 false );
-    setCommand( MENU_RULER,      TEXT( "&Ruler" ),            ruler, NULL,
+    setCommand( MENU_RULER,      TEXT( "&Ruler" ),            ruler,     NULL,
                 false );
 }
 
