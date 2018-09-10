@@ -23,7 +23,6 @@ extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
 
 extern bool g_isActiveHi;
-extern bool g_isActiveRul;
 
 extern HorizontalRuler mainHRuler;
 extern HorizontalRuler subHRuler;
@@ -179,6 +178,15 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                              mainTabHwnd );
             subHRuler.Init( nppData._nppHandle, nppData._scintillaSecondHandle,
                             subTabHwnd );
+
+/*
+            if ( mainHRuler.GetEnable() )
+                SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                             funcItem[RULERVISIBLE]._cmdID, TRUE );
+            else
+                SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                             funcItem[RULERVISIBLE]._cmdID, FALSE );
+*/
 
             SendMessage( nppData._nppHandle, WM_SIZE, 0, 0 );
         }

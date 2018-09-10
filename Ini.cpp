@@ -34,7 +34,7 @@ extern TCHAR NPP_PLUGIN_NAME[];
 
 Ini::Ini() :
     inited( 0 ),
-    fileName( _T( "NppHorizontalRuler.ini" ) )
+    fileName( _T( "ColumnTools.ini" ) )
 {
 }
 Ini::~Ini()

@@ -38,6 +38,10 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("&Column Tools");
 //
 const int nbFunc = 4;
 
+#define MENU_ENABLE     0
+#define MENU_SEPARATOR1 1
+#define MENU_HIGHLIGHT  2
+#define MENU_RULER      3
 
 //
 // Initialization of your plugin data
@@ -76,14 +80,12 @@ void highlight();
 void enColHi();
 void disColHi();
 void setColHi();
-void ruler();
 
 void RulerWndProcSet();
 void RulerWndProcUnset();
 
-void RulerToggle();
-void RulerVisible();
-
-void RulerOption();
+void ruler();
+void enRuler();
+void disRuler();
 
 #endif //PLUGINDEFINITION_H

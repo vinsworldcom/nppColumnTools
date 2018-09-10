@@ -29,14 +29,8 @@ FuncItem funcItem[nbFunc];
 NppData nppData;
 
 bool g_isActiveHi = false;
-bool g_isActiveRul = false;
 int  g_iEdgeModeOrig;
 int  g_iEdgeColOrig;
-
-#define MENU_ENABLE     0
-#define MENU_SEPARATOR1 1
-#define MENU_HIGHLIGHT  2
-#define MENU_RULER      3
 
 //
 // Initialize your plugin data here
@@ -76,7 +70,7 @@ void commandMenuInit()
     setCommand( MENU_HIGHLIGHT,  TEXT( "Column &highlight" ), highlight, NULL,
                 false );
     setCommand( MENU_RULER,      TEXT( "&Ruler" ),            ruler, NULL,
-                true );
+                false );
 }
 
 //
@@ -86,7 +80,6 @@ void commandMenuCleanUp()
 {
     // Don't forget to deallocate your shortcut here
 }
-
 
 //
 // This function help you to initialize your plugin commands
@@ -125,11 +118,23 @@ void enableAll()
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
     UINT state = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID, MF_BYCOMMAND );
 
-    highlight();
-    ruler();
+    if ( state & MF_CHECKED )
+    {
+        disColHi();
+        disRuler();
+    }
+    else
+    {
+        enColHi();
+        enRuler();
+    }
 
     ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                    funcItem[MENU_ENABLE]._cmdID, !( state & MF_CHECKED ) );
+    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                   funcItem[MENU_HIGHLIGHT]._cmdID, !( state & MF_CHECKED ) );
+    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                   funcItem[MENU_RULER]._cmdID, !( state & MF_CHECKED ) );
 }
 
 void highlight()
@@ -204,3 +209,16 @@ void setColHi()
     ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, col, 0 );
 }
 
+void ruler()
+{
+    HMENU hMenu = ::GetMenu( nppData._nppHandle );
+    UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID, MF_BYCOMMAND );
+
+    if ( state & MF_CHECKED )
+        disRuler();
+    else
+        enRuler();
+
+    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                   funcItem[MENU_RULER]._cmdID, !( state & MF_CHECKED ) );
+}
