@@ -37,6 +37,7 @@ int  g_iEdgeColOrig;
 // It will be called while plugin loading
 void pluginInit( HANDLE hModule )
 {
+
 }
 
 //
@@ -116,7 +117,8 @@ HWND getCurScintilla()
 void enableAll()
 {
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID, MF_BYCOMMAND );
+    UINT state = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID, 
+                                 MF_BYCOMMAND );
 
     if ( state & MF_CHECKED )
     {
@@ -140,7 +142,8 @@ void enableAll()
 void highlight()
 {
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID, MF_BYCOMMAND );
+    UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID, 
+                                 MF_BYCOMMAND );
 
     if ( state & MF_CHECKED )
     {
@@ -216,7 +219,8 @@ void setColHi()
 void ruler()
 {
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID, MF_BYCOMMAND );
+    UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID, 
+                                 MF_BYCOMMAND );
 
     if ( state & MF_CHECKED )
     {
