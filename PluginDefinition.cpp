@@ -170,6 +170,8 @@ void enColHi()
     g_iEdgeModeOrig = ::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
     g_iEdgeColOrig  = ::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
 
+    ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
+    setColHi();
     // Debug
     // TCHAR szBuffer[100];
     // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
