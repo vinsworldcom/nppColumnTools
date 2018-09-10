@@ -36,9 +36,12 @@ Ini::Ini() :
     inited( 0 ),
     fileName( _T( "ColumnTools.ini" ) )
 {
+
 }
+
 Ini::~Ini()
 {
+
 }
 
 int Ini::setIniPath( const TCHAR *setPath )
@@ -117,6 +120,7 @@ int Ini::setIniPath( const TCHAR *setPath )
     this->inited = 1;
     return 1;
 }
+
 int Ini::checkIniFile()
 {
     FILE *fp = NULL;
@@ -166,6 +170,7 @@ int Ini::writeDate( const TCHAR *section, const TCHAR *key, float data )
     return ( int )WritePrivateProfileString( section, key, buf,
             this->fullPath );
 }
+
 int Ini::writeDate( const TCHAR *section, const TCHAR *key, int data )
 {
     TCHAR buf[NUMDIGIT];
@@ -173,6 +178,7 @@ int Ini::writeDate( const TCHAR *section, const TCHAR *key, int data )
     return ( int )WritePrivateProfileString( section, key, buf,
             this->fullPath );
 }
+
 int Ini::writeDate( const TCHAR *section, const TCHAR *key,
                     const TCHAR *data )
 {
@@ -187,6 +193,7 @@ int Ini::readDate( const TCHAR *section, const TCHAR *key, TCHAR *data,
     return ( int )GetPrivateProfileString( section, key, L"", data,
                                            ( DWORD )dataSize, this->fullPath );
 }
+
 int Ini::readDate( const TCHAR *section, const TCHAR *key, int *data )
 {
     TCHAR buf[NUMDIGIT];
@@ -204,6 +211,7 @@ int Ini::readDate( const TCHAR *section, const TCHAR *key, int *data )
 
     return readSize;
 }
+
 int Ini::readDate( const TCHAR *section, const TCHAR *key, float *data )
 {
     TCHAR buf[NUMDIGIT];

@@ -60,7 +60,9 @@ HorizontalRuler::HorizontalRuler() :
     bFontFix( false ),
     nFontSize( 10 )
 {
+
 }
+
 HorizontalRuler::~HorizontalRuler()
 {
     if ( this->hFont )
@@ -117,6 +119,7 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
 
     return;
 }
+
 int HorizontalRuler::IsInit()
 {
     if ( ( this->tabHwnd == NULL ) || ( this->enable == 0 ) )
@@ -124,7 +127,6 @@ int HorizontalRuler::IsInit()
 
     return 1;
 }
-
 
 void HorizontalRuler::doVisible()
 {
@@ -134,6 +136,7 @@ void HorizontalRuler::doVisible()
     this->PaintRuler();
     return;
 }
+
 void HorizontalRuler::GetInitPos()
 {
     RECT clientRc, rc, tabClientRc, tabRc;
@@ -244,6 +247,7 @@ void HorizontalRuler::GetRuleArea()
 
     return;
 }
+
 void HorizontalRuler::SecureArea()
 {
     this->x = this->nInitClientX;
@@ -377,6 +381,7 @@ void HorizontalRuler::PaintRuler()
     SelectObject( hDC, oldFont );
     ReleaseDC( this->tabHwnd, hDC );
 }
+
 int HorizontalRuler::GetCaretPos()
 {
     //??????????
@@ -432,6 +437,7 @@ int HorizontalRuler::GetCaretPos()
 
     return nCaret;
 }
+
 void HorizontalRuler::SendSizeToMain()
 {
 
@@ -442,6 +448,7 @@ void HorizontalRuler::SendSizeToMain()
 
     return;
 }
+
 bool HorizontalRuler::HitDrawArea( int x, int y )
 {
     if ( ( x > this->rulerDesctopRect.left + this->nMarginWidth ) &&
@@ -452,6 +459,7 @@ bool HorizontalRuler::HitDrawArea( int x, int y )
 
     return false;
 }
+
 int HorizontalRuler::EdgeLine( int x, int y )
 {
     int nSetEdgeLine, nNowEdgeLine;
