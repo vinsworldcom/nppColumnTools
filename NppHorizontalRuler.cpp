@@ -38,6 +38,14 @@ http://sourceforge.jp/projects/opensource/wiki/licenses%2Fzlib_libpng_license
 extern NppData nppData;
 extern FuncItem funcItem[];
 
+HorizontalRuler mainHRuler;
+HorizontalRuler subHRuler;
+
+HWND mainTabHwnd;
+WNDPROC mainOldWndProc;
+HWND subTabHwnd;
+WNDPROC subOldWndProc;
+
 LRESULT onHorizontalRulerMessageProc( UINT Message, WPARAM wParam,
                                       LPARAM lParam )
 {
@@ -193,29 +201,40 @@ LRESULT CALLBACK RulerSubWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
     return CallWindowProc( subOldWndProc, hwnd, uMsg, wParam, lParam );
 }
 
+/*
 void RulerToggle()
 {
-    mainHRuler.SetEnable( !
-    mainHRuler.GetEnable() );
+    mainHRuler.SetEnable( !mainHRuler.GetEnable() );
     subHRuler.SetEnable( !subHRuler.GetEnable() );
 
     if ( mainHRuler.GetEnable() == 1 )
         SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                     funcItem[RULERVISIBLE]._cmdID, TRUE );
+                     funcItem[MENU_RULER]._cmdID, TRUE );
     else
         SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                     funcItem[RULERVISIBLE]._cmdID, FALSE );
+                     funcItem[MENU_RULER]._cmdID, FALSE );
 
     mainHRuler.SendSizeToMain();
     return;
 }
+*/
 
-void RulerVisible()
+void enRuler()
 {
+    if ( mainHRuler.GetEnable() )
+        return;
+
     mainHRuler.SetEnable( 1 );
     subHRuler.SetEnable( 1 );
     mainHRuler.SendSizeToMain();
-    SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                 funcItem[RULERVISIBLE]._cmdID, TRUE );
-    return;
+}
+
+void disRuler()
+{
+    if ( !mainHRuler.GetEnable() )
+        return;
+
+    mainHRuler.SetEnable( 0 );
+    subHRuler.SetEnable( 0 );
+    mainHRuler.SendSizeToMain();
 }
