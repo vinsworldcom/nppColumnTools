@@ -79,13 +79,14 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
 
     switch ( notifyCode->nmhdr.code )
     {
+/*
         case SCN_PAINTED:
         {
             if ( g_isActiveHi )
                 setColHi();
         }
         break;
-
+*/
 
         case SCN_UPDATEUI:
         {
@@ -113,6 +114,9 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                     subHRuler.PaintRuler();
                 }
             }
+
+            if ( g_isActiveHi )
+                setColHi();
         }
         break;
 
@@ -150,6 +154,9 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                     }
                 }
             }
+
+            if ( g_isActiveHi )
+                setColHi();
         }
         break;
 
@@ -168,6 +175,9 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                 subHRuler.SecureArea();
                 subHRuler.PaintRuler();
             }
+
+            if ( g_isActiveHi )
+                setColHi();
         }
         break;
 
@@ -179,14 +189,12 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
             subHRuler.Init( nppData._nppHandle, nppData._scintillaSecondHandle,
                             subTabHwnd );
 
-/*
             if ( mainHRuler.GetEnable() )
                 SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                             funcItem[RULERVISIBLE]._cmdID, TRUE );
+                             funcItem[MENU_RULER]._cmdID, TRUE );
             else
                 SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                             funcItem[RULERVISIBLE]._cmdID, FALSE );
-*/
+                             funcItem[MENU_RULER]._cmdID, FALSE );
 
             SendMessage( nppData._nppHandle, WM_SIZE, 0, 0 );
         }

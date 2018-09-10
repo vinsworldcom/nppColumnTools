@@ -143,7 +143,11 @@ void highlight()
     UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID, MF_BYCOMMAND );
 
     if ( state & MF_CHECKED )
+    {
         disColHi();
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
+    }
     else
         enColHi();
 
@@ -215,7 +219,11 @@ void ruler()
     UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID, MF_BYCOMMAND );
 
     if ( state & MF_CHECKED )
+    {
         disRuler();
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
+    }
     else
         enRuler();
 
