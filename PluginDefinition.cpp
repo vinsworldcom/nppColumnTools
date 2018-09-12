@@ -29,21 +29,15 @@ FuncItem funcItem[nbFunc];
 NppData nppData;
 
 bool g_isActiveHi = false;
-bool g_isActiveRul = false;
-bool g_isLockRul = true;
 int  g_iEdgeModeOrig;
 int  g_iEdgeColOrig;
-
-#define MENU_HIGHLIGHT  0
-#define MENU_SEPARATOR1 1
-#define MENU_RULER      2
-#define MENU_LOCKRULER  3
 
 //
 // Initialize your plugin data here
 // It will be called while plugin loading
 void pluginInit( HANDLE hModule )
 {
+
 }
 
 //
@@ -70,14 +64,14 @@ void commandMenuInit()
     //            ShortcutKey *shortcut,          // optional. Define a shortcut to trigger this command
     //            bool check0nInit                // optional. Make this menu item be checked visually
     //            );
-    setCommand( MENU_HIGHLIGHT,  TEXT( "Column &highlight" ),  highlight, NULL,
+    setCommand( MENU_ENABLE,     TEXT( "&Enable" ),           enableAll, NULL,
                 false );
-    setCommand( MENU_SEPARATOR1, TEXT( "-SEPARATOR-" ),        NULL, NULL,
+    setCommand( MENU_SEPARATOR1, TEXT( "-SEPARATOR-" ),       NULL,      NULL,
                 false );
-    setCommand( MENU_RULER,      TEXT( "Column &ruler" ),      ruler, NULL,
+    setCommand( MENU_HIGHLIGHT,  TEXT( "Column &highlight" ), highlight, NULL,
                 false );
-    setCommand( MENU_LOCKRULER,  TEXT( "Lock ruler at &top" ), lockRuler, NULL,
-                true );
+    setCommand( MENU_RULER,      TEXT( "&Ruler" ),            ruler,     NULL,
+                false );
 }
 
 //
@@ -87,7 +81,6 @@ void commandMenuCleanUp()
 {
     // Don't forget to deallocate your shortcut here
 }
-
 
 //
 // This function help you to initialize your plugin commands
@@ -121,13 +114,43 @@ HWND getCurScintilla()
            nppData._scintillaSecondHandle;
 }
 
+void enableAll()
+{
+    HMENU hMenu = ::GetMenu( nppData._nppHandle );
+    UINT state = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID, 
+                                 MF_BYCOMMAND );
+
+    if ( state & MF_CHECKED )
+    {
+        disColHi();
+        disRuler();
+    }
+    else
+    {
+        enColHi();
+        enRuler();
+    }
+
+    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                   funcItem[MENU_ENABLE]._cmdID, !( state & MF_CHECKED ) );
+    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                   funcItem[MENU_HIGHLIGHT]._cmdID, !( state & MF_CHECKED ) );
+    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                   funcItem[MENU_RULER]._cmdID, !( state & MF_CHECKED ) );
+}
+
 void highlight()
 {
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID, MF_BYCOMMAND );
+    UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID, 
+                                 MF_BYCOMMAND );
 
     if ( state & MF_CHECKED )
+    {
         disColHi();
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
+    }
     else
         enColHi();
 
@@ -147,6 +170,8 @@ void enColHi()
     g_iEdgeModeOrig = ::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
     g_iEdgeColOrig  = ::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
 
+    ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
+    setColHi();
     // Debug
     // TCHAR szBuffer[100];
     // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
@@ -195,72 +220,19 @@ void setColHi()
 
 void ruler()
 {
-    HWND hCurScintilla = getCurScintilla();
-
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID, MF_BYCOMMAND );
+    UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID, 
+                                 MF_BYCOMMAND );
 
     if ( state & MF_CHECKED )
     {
-        g_isActiveRul = false;
-
-        ::SendMessage( hCurScintilla, SCI_ANNOTATIONCLEARALL, 0, 0 );
+        disRuler();
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
     }
-    // Enable
     else
-    {
-        g_isActiveRul = true;
-
-        setRuler();
-    }
+        enRuler();
 
     ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                    funcItem[MENU_RULER]._cmdID, !( state & MF_CHECKED ) );
-}
-
-void lockRuler()
-{
-    HWND hCurScintilla = getCurScintilla();
-
-    HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_LOCKRULER]._cmdID, MF_BYCOMMAND );
-
-    if ( state & MF_CHECKED )
-        g_isLockRul = false;
-    else
-        g_isLockRul = true;
-
-    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                   funcItem[MENU_LOCKRULER]._cmdID, !( state & MF_CHECKED ) );
-}
-
-void setRuler()
-{
-    HWND hCurScintilla = getCurScintilla();
-
-    // int pos = ::SendMessage( hCurScintilla, SCI_GETCURRENTPOS, 0, 0 );
-    // int lin = ::SendMessage( hCurScintilla, SCI_LINEFROMPOSITION, pos, 0 );
-
-    ::SendMessage( hCurScintilla, SCI_ANNOTATIONCLEARALL, 0, 0 );
-    int lin = ::SendMessage( hCurScintilla, SCI_GETFIRSTVISIBLELINE, 0, 0 );
-
-    if ( lin == 0 )
-        lin = 1;
-
-    ::SendMessage( hCurScintilla, SCI_ANNOTATIONSETTEXT, lin,
-                   ( LPARAM )
-                   "--- 0 ---|--- 10---|--- 20---|--- 30---|--- 40---|--- 50---|--- 60---|--- 70---|--- 80---|--- 90---|---100---|---110---|---120---|---130---|---140---|---150---|---160---|---170---|---180---|---190---|\n\
-123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|" );
-    /**
-     * #define STYLE_DEFAULT 32
-     * #define STYLE_LINENUMBER 33
-     * #define STYLE_BRACELIGHT 34
-     * #define STYLE_BRACEBAD 35
-     * #define STYLE_CONTROLCHAR 36
-     * #define STYLE_INDENTGUIDE 37
-     * #define STYLE_CALLTNIP 38
-     */
-    ::SendMessage( hCurScintilla, SCI_ANNOTATIONSETSTYLE, lin,
-                   STYLE_LINENUMBER );
-    ::SendMessage( hCurScintilla, SCI_ANNOTATIONSETVISIBLE, lin, 0 );
 }

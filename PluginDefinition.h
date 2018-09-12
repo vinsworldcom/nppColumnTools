@@ -28,7 +28,7 @@
 //-------------------------------------//
 // Here define your plugin name
 //
-const TCHAR NPP_PLUGIN_NAME[] = TEXT("Column &Highlight");
+const TCHAR NPP_PLUGIN_NAME[] = TEXT("&Column Tools");
 
 //-----------------------------------------------//
 //-- STEP 2. DEFINE YOUR PLUGIN COMMAND NUMBER --//
@@ -38,6 +38,10 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("Column &Highlight");
 //
 const int nbFunc = 4;
 
+#define MENU_ENABLE     0
+#define MENU_SEPARATOR1 1
+#define MENU_HIGHLIGHT  2
+#define MENU_RULER      3
 
 //
 // Initialization of your plugin data
@@ -71,12 +75,17 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 // Your plugin command functions
 //
 HWND getCurScintilla();
+void enableAll();
 void highlight();
 void enColHi();
 void disColHi();
 void setColHi();
+
+void RulerWndProcSet();
+void RulerWndProcUnset();
+
 void ruler();
-void lockRuler();
-void setRuler();
+void enRuler();
+void disRuler();
 
 #endif //PLUGINDEFINITION_H
