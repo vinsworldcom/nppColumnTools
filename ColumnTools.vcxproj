@@ -11,24 +11,30 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ColHighlight.cpp" />
+    <ClCompile Include="ColumnTools.cpp" />
     <ClCompile Include="PluginDefinition.cpp" />
+    <ClCompile Include="HorizontalRuler.cpp" />
+    <ClCompile Include="NppHorizontalRuler.cpp" />
+    <ClCompile Include="Ini.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ColHighlight_private.h" />
+    <ClInclude Include="ColumnTools_private.h" />
     <ClInclude Include="menuCmdID.h" />
     <ClInclude Include="Notepad_plus_msgs.h" />
     <ClInclude Include="PluginDefinition.h" />
     <ClInclude Include="PluginInterface.h" />
+    <ClInclude Include="HorizontalRuler.h" />
+    <ClInclude Include="NppHorizontalRuler.h" />
+    <ClInclude Include="Ini.h" />
     <ClInclude Include="Scintilla.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="ColHighlight_private.rc" />
+    <ResourceCompile Include="ColumnTools_private.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1590D7CD-7D3A-4AB7-A355-EE02F7FB987D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>ColHighlight</RootNamespace>
+    <RootNamespace>ColumnTools</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -69,7 +75,7 @@
       </AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;ColHighlight_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;ColumnTools_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -78,11 +84,11 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)ColHighlight.dll</OutputFile>
+      <OutputFile>$(OutDir)ColumnTools.dll</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(OutDir)ColHighlight.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)ColumnTools.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <ImportLibrary>$(OutDir)ColHighlight.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)ColumnTools.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -90,7 +96,9 @@
     <ClCompile>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;ColHighlight_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Full</Optimization>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;ColumnTools_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
       <PrecompiledHeaderFile />
@@ -99,11 +107,11 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)ColHighlight.dll</OutputFile>
+      <OutputFile>$(OutDir)ColumnTools.dll</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
-      <ImportLibrary>$(OutDir)ColHighlight.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)ColumnTools.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
