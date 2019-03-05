@@ -35,7 +35,7 @@ int  g_iEdgeColOrig;
 //
 // Initialize your plugin data here
 // It will be called while plugin loading
-void pluginInit( HANDLE hModule )
+void pluginInit( HANDLE /* hModule */ )
 {
 
 }
@@ -167,8 +167,8 @@ void enColHi()
 
     // Save original edge properties
     HWND hCurScintilla = getCurScintilla();
-    g_iEdgeModeOrig = ::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
-    g_iEdgeColOrig  = ::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
+    g_iEdgeModeOrig = (int)::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
+    g_iEdgeColOrig  = (int)::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
 
     ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
     setColHi();
@@ -211,8 +211,8 @@ void setColHi()
 {
     // Get current cursor position
     HWND hCurScintilla = getCurScintilla();
-    int pos = ::SendMessage( hCurScintilla, SCI_GETCURRENTPOS, 0, 0 );
-    int col = ::SendMessage( hCurScintilla, SCI_GETCOLUMN, pos, 0 );
+    int pos = (int)::SendMessage( hCurScintilla, SCI_GETCURRENTPOS, 0, 0 );
+    int col = (int)::SendMessage( hCurScintilla, SCI_GETCOLUMN, pos, 0 );
 
     // Set edge column to current cursort position
     ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, col, 0 );

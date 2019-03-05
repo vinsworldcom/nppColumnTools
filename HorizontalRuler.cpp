@@ -202,7 +202,7 @@ void HorizontalRuler::GetRuleArea()
 {
     int i;
     char sFontName[MAX_PATH];
-    int nFontSize;
+//    int nFontSize;
     HDC hDC;
 
     this->nCharWidth = ( int )SendMessage( this->scintillaHwnd, SCI_TEXTWIDTH,
@@ -450,22 +450,22 @@ void HorizontalRuler::SendSizeToMain()
     return;
 }
 
-bool HorizontalRuler::HitDrawArea( int x, int y )
+bool HorizontalRuler::HitDrawArea( int lx, int ly )
 {
-    if ( ( x > this->rulerDesctopRect.left + this->nMarginWidth ) &&
-            ( x < this->rulerDesctopRect.right ) &&
-            ( y > this->rulerDesctopRect.top ) &&
-            ( y < this->rulerDesctopRect.top + this->nTopMargin ) )
+    if ( ( lx > this->rulerDesctopRect.left + this->nMarginWidth ) &&
+            ( lx < this->rulerDesctopRect.right ) &&
+            ( ly > this->rulerDesctopRect.top ) &&
+            ( ly < this->rulerDesctopRect.top + this->nTopMargin ) )
         return true;
 
     return false;
 }
 
-int HorizontalRuler::EdgeLine( int x, int y )
+int HorizontalRuler::EdgeLine( int lx, int /* y */)
 {
     int nSetEdgeLine, nNowEdgeLine;
     int nEdgeLineMode;
-    nSetEdgeLine = ( x - ( this->rulerDesctopRect.left +
+    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left +
                            this->nMarginWidth ) ) / this->nCharWidth;
     nNowEdgeLine = ( int )SendMessage( this->scintillaHwnd, SCI_GETEDGECOLUMN,
                                        0, 0 );

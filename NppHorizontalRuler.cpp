@@ -47,7 +47,7 @@ HWND subTabHwnd;
 WNDPROC subOldWndProc;
 
 LRESULT onHorizontalRulerMessageProc( UINT Message, WPARAM wParam,
-                                      LPARAM lParam )
+                                      LPARAM /* lParam */)
 {
     switch ( Message )
     {
