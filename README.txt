@@ -33,16 +33,33 @@ but they aren't in the Scintilla.h provided with the Notepad++ demo plugin.
 
 DEPENDENCIES
 
-There was a Makefile written for gmake.exe from the MinGW distribution.
-
-I've compiled it fine, but needed to statically include glibc so I could 
-change my C compiler in my path.  This led to a much larger DLL.
-
 I compiled with MS Visual Studio Community 2017 and this seems to work 
 OK.
 
-[x86 Native Tools Command Prompt for VS 2017]
-Configuration=Release
-Platform=Win32
+For 32-bit:
+  [x86 Native Tools Command Prompt for VS 2017]
+  C:\> set Configuration=Release
+  C:\> set Platform=x86
+  C:\> msbuild
 
-  msbuild
+For 64-bit:
+  [x64 Native Tools Command Prompt for VS 2017]
+  C:\> set Configuration=Release
+  C:\> set Platform=x64
+  C:\> msbuild
+
+
+INSTALLATION
+
+Copy the:
+
+32-bit:
+    ./bin/ColumnTools.dll
+   
+64-bit:
+    ./bin64/ColumnTools.dll
+
+to the Notepad++ plugins folder:
+  - In N++ <7.6, directly in the plugins/ folder
+  - In N++ >=7.6, in a directory called ColumnTools in the plugins/ folder
+    (plugins/ColumnTools/)
