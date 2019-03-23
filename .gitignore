@@ -1,0 +1,10 @@
+Debug
+Release
+.vs
+*.suo
+*.exp
+*.lib
+*.iobj
+*.ipdb
+*.user
+*.zip
