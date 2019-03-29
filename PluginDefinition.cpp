@@ -45,7 +45,7 @@ void pluginInit( HANDLE /* hModule */ )
 //
 void pluginCleanUp()
 {
-    disColHi();
+//    disColHi();
 }
 
 //
@@ -64,7 +64,7 @@ void commandMenuInit()
     //            ShortcutKey *shortcut,          // optional. Define a shortcut to trigger this command
     //            bool check0nInit                // optional. Make this menu item be checked visually
     //            );
-    setCommand( MENU_ENABLE,     TEXT( "&Enable" ),           enableAll, NULL,
+    setCommand( MENU_ENABLE,     TEXT( "&Enable all" ),       enableAll, NULL,
                 false );
     setCommand( MENU_SEPARATOR1, TEXT( "-SEPARATOR-" ),       NULL,      NULL,
                 false );
@@ -117,10 +117,15 @@ HWND getCurScintilla()
 void enableAll()
 {
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID, 
-                                 MF_BYCOMMAND );
+    UINT stateA = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID,
+                                  MF_BYCOMMAND );
+    UINT stateC = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
+                                  MF_BYCOMMAND );
+    UINT stateR = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
+                                  MF_BYCOMMAND );
 
-    if ( state & MF_CHECKED )
+    if ( ( stateA & MF_CHECKED ) || ( ( stateR & MF_CHECKED )
+                                      && ( stateC & MF_CHECKED ) ) )
     {
         disColHi();
         disRuler();
@@ -132,17 +137,32 @@ void enableAll()
     }
 
     ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                   funcItem[MENU_ENABLE]._cmdID, !( state & MF_CHECKED ) );
+                   funcItem[MENU_ENABLE]._cmdID, !( stateA & MF_CHECKED ) );
     ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                   funcItem[MENU_HIGHLIGHT]._cmdID, !( state & MF_CHECKED ) );
+                   funcItem[MENU_HIGHLIGHT]._cmdID, !( stateA & MF_CHECKED ) );
     ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                   funcItem[MENU_RULER]._cmdID, !( state & MF_CHECKED ) );
+                   funcItem[MENU_RULER]._cmdID, !( stateA & MF_CHECKED ) );
+}
+
+void syncEnable()
+{
+    HMENU hMenu = ::GetMenu( nppData._nppHandle );
+    UINT stateA = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID,
+                                  MF_BYCOMMAND );
+    UINT stateC = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
+                                  MF_BYCOMMAND );
+    UINT stateR = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
+                                  MF_BYCOMMAND );
+
+    if ( ( stateR & MF_CHECKED ) && ( stateC & MF_CHECKED ) )
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_ENABLE]._cmdID, !( stateA & MF_CHECKED ) );
 }
 
 void highlight()
 {
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID, 
+    UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
                                  MF_BYCOMMAND );
 
     if ( state & MF_CHECKED )
@@ -156,6 +176,8 @@ void highlight()
 
     ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                    funcItem[MENU_HIGHLIGHT]._cmdID, !( state & MF_CHECKED ) );
+
+    syncEnable();
 }
 
 void enColHi()
@@ -167,8 +189,10 @@ void enColHi()
 
     // Save original edge properties
     HWND hCurScintilla = getCurScintilla();
-    g_iEdgeModeOrig = (int)::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0, 0 );
-    g_iEdgeColOrig  = (int)::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0, 0 );
+    g_iEdgeModeOrig = ( int )::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0,
+                                            0 );
+    g_iEdgeColOrig  = ( int )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
+                                            0 );
 
     ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
     setColHi();
@@ -211,8 +235,8 @@ void setColHi()
 {
     // Get current cursor position
     HWND hCurScintilla = getCurScintilla();
-    int pos = (int)::SendMessage( hCurScintilla, SCI_GETCURRENTPOS, 0, 0 );
-    int col = (int)::SendMessage( hCurScintilla, SCI_GETCOLUMN, pos, 0 );
+    int pos = ( int )::SendMessage( hCurScintilla, SCI_GETCURRENTPOS, 0, 0 );
+    int col = ( int )::SendMessage( hCurScintilla, SCI_GETCOLUMN, pos, 0 );
 
     // Set edge column to current cursort position
     ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, col, 0 );
@@ -221,7 +245,7 @@ void setColHi()
 void ruler()
 {
     HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID, 
+    UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
                                  MF_BYCOMMAND );
 
     if ( state & MF_CHECKED )
@@ -235,4 +259,6 @@ void ruler()
 
     ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                    funcItem[MENU_RULER]._cmdID, !( state & MF_CHECKED ) );
+
+    syncEnable();
 }

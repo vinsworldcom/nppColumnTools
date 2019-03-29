@@ -196,6 +196,8 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                 SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                              funcItem[MENU_RULER]._cmdID, FALSE );
 
+            syncEnable();
+
             SendMessage( nppData._nppHandle, WM_SIZE, 0, 0 );
         }
         break;

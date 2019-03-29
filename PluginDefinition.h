@@ -76,6 +76,7 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 //
 HWND getCurScintilla();
 void enableAll();
+void syncEnable();
 void highlight();
 void enColHi();
 void disColHi();

@@ -31,13 +31,20 @@ http://sourceforge.jp/projects/opensource/wiki/licenses%2Fzlib_libpng_license
 #include "HorizontalRuler.h"
 #include "menuCmdID.h"
 #include "ini.h"
+#include "PluginDefinition.h"
 
 #include <windows.h>
 #include <Commctrl.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+extern NppData nppData;
+extern FuncItem funcItem[];
+
 extern WNDPROC oldWndProc;
+extern bool g_isActiveHi;
+extern int  g_iEdgeModeOrig;
+extern int  g_iEdgeColOrig;
 
 #define FRAMESIZE GetSystemMetrics(SM_CXEDGE)
 //SM_CXBORDER //3D??
@@ -68,6 +75,7 @@ HorizontalRuler::~HorizontalRuler()
     if ( this->hFont )
         DeleteObject( this->hFont );
 
+    // Ruler
     Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ),
                                    TEXT( "FontSize" ), this->nFontSize );
 
@@ -82,8 +90,23 @@ HorizontalRuler::~HorizontalRuler()
                                    nBuf );
 
 
-    Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ), 
+    Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ),
                                    TEXT( "Visible" ), this->enable );
+
+    // Column
+    Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ),
+                                   TEXT( "Mode" ), g_iEdgeModeOrig );
+
+    Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ),
+                                   TEXT( "Column" ), g_iEdgeColOrig );
+
+    if ( g_isActiveHi == true )
+        nBuf = 1;
+    else
+        nBuf = 0;
+
+    Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ), TEXT( "Enable" ),
+                                   nBuf );
 }
 
 void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
@@ -100,14 +123,16 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
                  ( LPARAM )configDir );
 
     Ini::getInstance()->setIniPath( configDir );
-    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), 
+
+    // Ruler
+    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ),
                                   TEXT( "FontSize" ), buf, MAX_PATH );
     nBuf = _ttoi( buf );
 
     if ( nBuf != 0 )
         this->nFontSize = nBuf;
 
-    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "Fix" ), 
+    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "Fix" ),
                                   buf, MAX_PATH );
     nBuf = _ttoi( buf );
 
@@ -116,6 +141,27 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
 
     Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "Visible" ),
                                   &this->enable );
+
+    // Column
+    Ini::getInstance()->readDate( TEXT( "ColumnHighlight" ), TEXT( "Mode" ),
+                                  &g_iEdgeModeOrig );
+
+    Ini::getInstance()->readDate( TEXT( "ColumnHighlight" ), TEXT( "Column" ),
+                                  &g_iEdgeColOrig );
+
+    Ini::getInstance()->readDate( TEXT( "ColumnHighlight" ), TEXT( "Enable" ),
+                                  buf, MAX_PATH );
+    nBuf = _ttoi( buf );
+
+    if ( nBuf != 0 )
+    {
+        enColHi();
+        HMENU hMenu = ::GetMenu( nppData._nppHandle );
+        UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
+                                     MF_BYCOMMAND );
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+               funcItem[MENU_HIGHLIGHT]._cmdID, ( state | MF_CHECKED ) );
+    }
 
     return;
 }
@@ -142,43 +188,33 @@ void HorizontalRuler::GetInitPos()
     RECT clientRc, rc, tabClientRc, tabRc;
     //POINT pt;
 
-    //Scintilla????Npp????????????Tab?????????????????????
     GetWindowRect( this->scintillaHwnd, &rc );
     GetClientRect( this->scintillaHwnd, &clientRc );
     GetWindowRect( this->tabHwnd, &tabRc );
     GetClientRect( this->tabHwnd, &tabClientRc );
 
     if ( !::SendMessage( this->nppHwnd, NPPM_ISTABBARHIDDEN, 0, 0 ) )
-        SendMessage( this->tabHwnd, TCM_ADJUSTRECT, FALSE, 
+        SendMessage( this->tabHwnd, TCM_ADJUSTRECT, FALSE,
                      ( LPARAM )&tabClientRc );
 
-    //Scintilla?Tab??????????????Npp??????????
     MapWindowPoints( HWND_DESKTOP, this->nppHwnd, ( LPPOINT )&rc, 2 );
     MapWindowPoints( HWND_DESKTOP, this->nppHwnd, ( LPPOINT )&tabRc, 2 );
 
-    //Scintilla????????
-    //???????? - ??????????????????????????????????? ????????
     this->nScintillaFrameSize = GetSystemMetrics( SM_CXEDGE );
 
-    //x?y???????????????????? ???????
-    this->nInitClientX    = tabRc.left + tabClientRc.left;
-    this->nInitClientY    = tabRc.top + tabClientRc.top +
-                            this->nScintillaFrameSize;
+    this->nInitClientX  = tabRc.left + tabClientRc.left;
+    this->nInitClientY  = tabRc.top + tabClientRc.top +
+                          this->nScintillaFrameSize;
     this->nInitWidth    = tabClientRc.right - tabClientRc.left;
-    this->nInitHeight    = tabClientRc.bottom - tabClientRc.top -
-                           this->nScintillaFrameSize;
-    //???????????????????????
-    this->nInitClientX    = this->nInitClientX < 0    ? 0    :
-                            this->nInitClientX;
-    this->nInitClientY    = this->nInitClientY < 0    ? 0    :
-                            this->nInitClientY;
-    this->nInitWidth    = this->nInitWidth < 0    ? 0    : this->nInitWidth;
-    this->nInitHeight    = this->nInitHeight < 0    ? 0    : this->nInitHeight;
+    this->nInitHeight   = tabClientRc.bottom - tabClientRc.top -
+                          this->nScintillaFrameSize;
+    this->nInitClientX  = this->nInitClientX  < 0 ? 0 : this->nInitClientX;
+    this->nInitClientY  = this->nInitClientY  < 0 ? 0 : this->nInitClientY;
+    this->nInitWidth    = this->nInitWidth    < 0 ? 0 : this->nInitWidth;
+    this->nInitHeight   = this->nInitHeight   < 0 ? 0 : this->nInitHeight;
 
-    //???????
     if ( clientRc.right > 0 )
     {
-        //?????????0????????????????????????????
         SCROLLBARINFO scrollInfo;
         scrollInfo.cbSize = sizeof( scrollInfo );
         GetScrollBarInfo( this->scintillaHwnd, OBJID_VSCROLL, &scrollInfo );
@@ -188,7 +224,6 @@ void HorizontalRuler::GetInitPos()
                                  scrollInfo.rcScrollBar.left;
     }
 
-    //????????????
     tabClientRc.top += this->nScintillaFrameSize;
 
     this->nDrawStartX    = tabClientRc.left;
@@ -241,7 +276,7 @@ void HorizontalRuler::GetRuleArea()
     if ( this->bFontFix == true )
         this->nCharHeight = abs( logFont.lfHeight );
     else
-        this->nCharHeight = ( int )SendMessage( this->scintillaHwnd, 
+        this->nCharHeight = ( int )SendMessage( this->scintillaHwnd,
                                                 SCI_TEXTHEIGHT, 0, 0 );
 
     this->nTopMargin = ( int )( nCharHeight * 1.5f );
@@ -323,7 +358,7 @@ void HorizontalRuler::PaintRuler()
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol );
             SetBkMode( hDC, TRANSPARENT );
-            ExtTextOut( hDC, nRulerStartX + 1, rc.top, ETO_CLIPPED, &rc, 
+            ExtTextOut( hDC, nRulerStartX + 1, rc.top, ETO_CLIPPED, &rc,
                         sColumNumber, nLength, 0 );
 
             MoveToEx( hDC, nRulerStartX, rc.top, NULL );
@@ -355,7 +390,7 @@ void HorizontalRuler::PaintRuler()
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol + i );
             SetBkMode( hDC, TRANSPARENT );
-            ExtTextOut( hDC, tmp + 1, rc.top, ETO_CLIPPED, &rc, sColumNumber, 
+            ExtTextOut( hDC, tmp + 1, rc.top, ETO_CLIPPED, &rc, sColumNumber,
                         nLength, 0 );
             //TextOut(hDC, tmp+1, rc.top, sColumNumber, nLength);
 
@@ -469,7 +504,7 @@ int HorizontalRuler::EdgeLine( int lx, int /* y */)
                            this->nMarginWidth ) ) / this->nCharWidth;
     nNowEdgeLine = ( int )SendMessage( this->scintillaHwnd, SCI_GETEDGECOLUMN,
                                        0, 0 );
-    nEdgeLineMode = ( int )SendMessage( this->scintillaHwnd, SCI_GETEDGEMODE, 
+    nEdgeLineMode = ( int )SendMessage( this->scintillaHwnd, SCI_GETEDGEMODE,
                                         0, 0 );
 
     if ( ( nNowEdgeLine != nSetEdgeLine ) || ( nEdgeLineMode == EDGE_NONE ) )

@@ -21,10 +21,8 @@ the following restrictions:
 
     3. This notice may not be removed or altered from any source distribution.
 
-??
 http://opensource.org/licenses/Zlib
 
-????
 http://sourceforge.jp/projects/opensource/wiki/licenses%2Fzlib_libpng_license
 */
 
@@ -132,8 +130,6 @@ LRESULT CALLBACK RulerMainWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
 
             break;
 
-        //???????????????????????????????????????
-        //??? GETCURSEL GETIMAGELIST GETITEMW?????????????? GETIMAGELIST
         case TCM_GETIMAGELIST:
             if ( mainHRuler.IsInit() )
             {
@@ -202,24 +198,6 @@ LRESULT CALLBACK RulerSubWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
 
     return CallWindowProc( subOldWndProc, hwnd, uMsg, wParam, lParam );
 }
-
-/*
-void RulerToggle()
-{
-    mainHRuler.SetEnable( !mainHRuler.GetEnable() );
-    subHRuler.SetEnable( !subHRuler.GetEnable() );
-
-    if ( mainHRuler.GetEnable() == 1 )
-        SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                     funcItem[MENU_RULER]._cmdID, TRUE );
-    else
-        SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                     funcItem[MENU_RULER]._cmdID, FALSE );
-
-    mainHRuler.SendSizeToMain();
-    return;
-}
-*/
 
 void enRuler()
 {
