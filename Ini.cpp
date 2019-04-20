@@ -21,10 +21,8 @@ the following restrictions:
 
     3. This notice may not be removed or altered from any source distribution.
 
-原文
 http://opensource.org/licenses/Zlib
 
-日本語訳
 http://sourceforge.jp/projects/opensource/wiki/licenses%2Fzlib_libpng_license
 */
 
@@ -52,10 +50,8 @@ int Ini::setIniPath( const TCHAR *setPath )
     if ( this->inited != 0 )
         return 0;
 
-    ////ファイル名の挿入
     //_tcscat_s(this->fileName, MAX_PATH, _T("HorizontalRuler.ini"));
 
-    //ない場合実行ファイルのある場所を
     if ( setPath == NULL )
     {
         //int SetExecuteCurrentPath()
@@ -84,7 +80,6 @@ int Ini::setIniPath( const TCHAR *setPath )
             return flag;
     }
 
-    //iniファイルのフルパス作成
     flag = _tcscpy_s( this->fullPath, MAX_PATH, this->path );
 
     if ( flag != 0 )
@@ -136,11 +131,9 @@ int Ini::checkIniFile()
 //{
 //    FILE *fp;
 //    int error;
-//    //ファイルの存在確認
 //    error = _wfopen_s(&fp, pwsIniPath, L"r");
 //    if( error != 0)
 //    {
-//        //ファイルがない=初回起動のため例を作成し終了
 //        DefalutIniMake(pwsIniPath);
 //        return 1;
 //    }
@@ -155,14 +148,11 @@ int Ini::defaultIni()
 {
 //int DefalutIniMake(wchar_t *filePath)
 //{
-//    WriteIni(L"example or 例", L"\"./foo/notepad.exe\" or \"C:\\foo\\notepad.exe\"  DirectorySeparate=\\ or /", filePath);
 //    return 0;
 //}
     return 1;
 }
 
-///write系の戻り値は0以外は正常、0はエラー　http://msdn.microsoft.com/ja-jp/library/cc429952.aspxへ
-//NUMDIGIT = 64桁
 int Ini::writeDate( const TCHAR *section, const TCHAR *key, float data )
 {
     TCHAR buf[NUMDIGIT];
@@ -186,7 +176,6 @@ int Ini::writeDate( const TCHAR *section, const TCHAR *key,
             this->fullPath );
 }
 
-///戻り値は読み込んだ文字数 error時はhttp://msdn.microsoft.com/ja-jp/library/cc429779.aspxを
 int Ini::readDate( const TCHAR *section, const TCHAR *key, TCHAR *data,
                    int dataSize )
 {
