@@ -5,11 +5,11 @@
 #define COLHIGHLIGHT_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"1.3.2.1"
+#define VER_STRING	"1.3.3.4"
 #define VER_MAJOR	1
 #define VER_MINOR	3
-#define VER_RELEASE	2
-#define VER_BUILD	1
+#define VER_RELEASE	3
+#define VER_BUILD	4
 #define COMPANY_NAME	  "Vin's World"
 #define FILE_VERSION	  VER_STRING
 #define FILE_DESCRIPTION  "Notepad++ Plugin providing column tools for highlighting and ruler."

@@ -327,6 +327,7 @@ void HorizontalRuler::PaintRuler()
 
     rc.bottom = rc.top + this->nTopMargin;
 
+
     //?????????????
     memset( &si, 0, sizeof( SCROLLINFO ) );
     si.cbSize = sizeof( SCROLLINFO );
@@ -337,7 +338,17 @@ void HorizontalRuler::PaintRuler()
     nStartCol = si.nPos / this->nCharWidth;
 
     //??????????
-    nCaret = this->GetCaretPos();
+    bool rect = ( bool )::SendMessage( this->scintillaHwnd, SCI_SELECTIONISRECTANGLE, 0, 0 );
+    int vsp = 0;
+    if ( rect )
+        vsp = ( int )::SendMessage( this->scintillaHwnd, SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE, 0, 0 );
+    else
+    {
+        int sel = ( int )::SendMessage( this->scintillaHwnd, SCI_GETMAINSELECTION, 0, 0 );
+        vsp = ( int )::SendMessage( this->scintillaHwnd, SCI_GETSELECTIONNCARETVIRTUALSPACE, sel, 0 );
+    }
+
+    nCaret = this->GetCaretPos() + vsp;
 
     //??????
     hDC = GetWindowDC( this->tabHwnd );

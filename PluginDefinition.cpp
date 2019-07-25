@@ -237,9 +237,18 @@ void setColHi()
     HWND hCurScintilla = getCurScintilla();
     int pos = ( int )::SendMessage( hCurScintilla, SCI_GETCURRENTPOS, 0, 0 );
     int col = ( int )::SendMessage( hCurScintilla, SCI_GETCOLUMN, pos, 0 );
+    bool rect = ( bool )::SendMessage( hCurScintilla, SCI_SELECTIONISRECTANGLE, 0, 0 );
+    int vsp = 0;
+    if ( rect )
+        vsp = ( int )::SendMessage( hCurScintilla, SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE, 0, 0 );
+    else
+    {
+        int sel = ( int )::SendMessage( hCurScintilla, SCI_GETMAINSELECTION, 0, 0 );
+        vsp = ( int )::SendMessage( hCurScintilla, SCI_GETSELECTIONNCARETVIRTUALSPACE, sel, 0 );
+    }
 
     // Set edge column to current cursort position
-    ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, col, 0 );
+    ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, col + vsp, 0 );
 }
 
 void ruler()
