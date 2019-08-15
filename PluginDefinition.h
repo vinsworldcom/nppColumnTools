@@ -88,5 +88,6 @@ void RulerWndProcUnset();
 void ruler();
 void enRuler();
 void disRuler();
+int GetColumnCaretPos();
 
 #endif //PLUGINDEFINITION_H

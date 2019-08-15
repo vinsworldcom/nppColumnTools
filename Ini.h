@@ -21,10 +21,8 @@ the following restrictions:
 
     3. This notice may not be removed or altered from any source distribution.
 
-原文
 http://opensource.org/licenses/Zlib
 
-日本語訳
 http://sourceforge.jp/projects/opensource/wiki/licenses%2Fzlib_libpng_license
 */
 

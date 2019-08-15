@@ -1,0 +1,32 @@
+#include <windows.h> // include for version info constants
+#include "resource.h"
+
+//
+// TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
+//
+1 VERSIONINFO
+FILEVERSION VER_MAJOR,VER_MINOR,VER_RELEASE,VER_BUILD
+PRODUCTVERSION VER_MAJOR,VER_MINOR,VER_RELEASE,VER_BUILD
+FILETYPE VFT_APP
+{
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "040904E4"
+        {
+            VALUE "FileDescription",  FILE_DESCRIPTION
+            VALUE "InternalName",     INTERNAL_NAME
+
+            VALUE "CompanyName",      COMPANY_NAME
+            VALUE "FileVersion",      VER_STRING
+            VALUE "LegalCopyright",   LEGAL_COPYRIGHT
+            VALUE "LegalTrademarks",  LEGAL_TRADEMARKS
+            VALUE "OriginalFilename", ORIGINAL_FILENAME
+            VALUE "ProductName",      PRODUCT_NAME
+            VALUE "ProductVersion",   VER_STRING
+        }
+    }
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x0409, 1252
+    }
+}

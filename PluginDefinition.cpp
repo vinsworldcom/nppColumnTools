@@ -235,8 +235,6 @@ void setColHi()
 {
     // Get current cursor position
     HWND hCurScintilla = getCurScintilla();
-    int pos = ( int )::SendMessage( hCurScintilla, SCI_GETCURRENTPOS, 0, 0 );
-    int col = ( int )::SendMessage( hCurScintilla, SCI_GETCOLUMN, pos, 0 );
     bool rect = ( bool )::SendMessage( hCurScintilla, SCI_SELECTIONISRECTANGLE, 0, 0 );
     int vsp = 0;
     if ( rect )
@@ -248,7 +246,7 @@ void setColHi()
     }
 
     // Set edge column to current cursort position
-    ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, col + vsp, 0 );
+    ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, GetColumnCaretPos() + vsp, 0 );
 }
 
 void ruler()
@@ -270,4 +268,61 @@ void ruler()
                    funcItem[MENU_RULER]._cmdID, !( state & MF_CHECKED ) );
 
     syncEnable();
+}
+
+int GetColumnCaretPos()
+{
+    int i;
+
+    char *curLin;
+    wchar_t *wideCurLin;
+    char *ansiCurLin;
+    int nWideExchange;
+    int nAnsiExchange;
+
+    int nCaret;
+    int nTabSpace;
+    int nLineLength;
+
+    HWND hCurScintilla = getCurScintilla();
+
+    nLineLength = ( int )SendMessage( hCurScintilla, SCI_GETCURLINE, 0,
+                                      0 );
+    curLin = new char[nLineLength];
+    nCaret = ( int )SendMessage( hCurScintilla, SCI_GETCURLINE,
+                                 nLineLength, ( LPARAM )curLin );
+    nTabSpace = ( int )SendMessage( hCurScintilla, SCI_GETTABWIDTH, 0,
+                                    0 );
+
+    curLin[nCaret] = '\0';
+    //utf8->utf16
+    nWideExchange = MultiByteToWideChar( CP_UTF8, 0, curLin, -1, 0, 0 );
+    wideCurLin = new wchar_t[nWideExchange];
+    MultiByteToWideChar( CP_UTF8, 0, curLin, -1, wideCurLin, nWideExchange );
+    nAnsiExchange = WideCharToMultiByte( CP_ACP, 0, wideCurLin, nWideExchange,
+                                         0, 0, NULL, NULL );
+    //utf16->ansi
+    ansiCurLin = new char[nAnsiExchange];
+    WideCharToMultiByte( CP_ACP, 0, wideCurLin, nWideExchange, ansiCurLin,
+                         nAnsiExchange, NULL, NULL );
+
+    //???????
+    nCaret = 0;
+
+    for ( i = 0; i < nAnsiExchange - 1; i++ )
+    {
+        if ( ansiCurLin[i] == '\t' )
+            nCaret = ( ( nCaret / nTabSpace ) + 1 ) * nTabSpace;
+        else
+            nCaret++;
+    }
+
+    delete[] ansiCurLin;
+    delete[] wideCurLin;
+    delete[] curLin;
+    ansiCurLin = NULL;
+    wideCurLin = NULL;
+    curLin = NULL;
+
+    return nCaret;
 }

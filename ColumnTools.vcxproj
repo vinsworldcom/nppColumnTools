@@ -172,7 +172,7 @@
     <ClCompile Include="Ini.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ColumnTools_private.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="menuCmdID.h" />
     <ClInclude Include="Notepad_plus_msgs.h" />
     <ClInclude Include="PluginDefinition.h" />
@@ -183,9 +183,10 @@
     <ClInclude Include="Scintilla.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="ColumnTools_private.rc" />
+    <ResourceCompile Include="ColumnTools.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Import Project="NppZip.targets"/>
 </Project>
