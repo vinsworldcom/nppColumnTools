@@ -156,11 +156,11 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
     if ( nBuf != 0 )
     {
         enColHi();
-        HMENU hMenu = ::GetMenu( nppData._nppHandle );
-        UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
-                                     MF_BYCOMMAND );
+        // HMENU hMenu = ::GetMenu( nppData._nppHandle );
+        // UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
+                                     // MF_BYCOMMAND );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-               funcItem[MENU_HIGHLIGHT]._cmdID, ( state | MF_CHECKED ) );
+               funcItem[MENU_HIGHLIGHT]._cmdID, MF_CHECKED );
     }
 
     return;

@@ -16,6 +16,7 @@
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "PluginDefinition.h"
+#include "HorizontalRuler.h"
 #include "menuCmdID.h"
 
 //
@@ -31,6 +32,8 @@ NppData nppData;
 bool g_isActiveHi = false;
 int  g_iEdgeModeOrig;
 int  g_iEdgeColOrig;
+
+extern HorizontalRuler mainHRuler;
 
 //
 // Initialize your plugin data here
@@ -116,66 +119,76 @@ HWND getCurScintilla()
 
 void enableAll()
 {
-    HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT stateA = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID,
-                                  MF_BYCOMMAND );
-    UINT stateC = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
-                                  MF_BYCOMMAND );
-    UINT stateR = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
-                                  MF_BYCOMMAND );
+    // HMENU hMenu = ::GetMenu( nppData._nppHandle );
+    // UINT stateA = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID,
+                                  // MF_BYCOMMAND );
+    // UINT stateC = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
+                                  // MF_BYCOMMAND );
+    // UINT stateR = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
+                                  // MF_BYCOMMAND );
 
-    if ( ( stateA & MF_CHECKED ) || ( ( stateR & MF_CHECKED )
-                                      && ( stateC & MF_CHECKED ) ) )
+    // if ( ( stateA & MF_CHECKED ) || ( ( stateR & MF_CHECKED )
+                                      // && ( stateC & MF_CHECKED ) ) )
+    if ( g_isActiveHi && mainHRuler.GetEnable() )
     {
         disColHi();
         disRuler();
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_HIGHLIGHT]._cmdID, MF_UNCHECKED );
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_RULER]._cmdID, MF_UNCHECKED );
     }
     else
     {
         enColHi();
         enRuler();
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_ENABLE]._cmdID, MF_CHECKED );
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_HIGHLIGHT]._cmdID, MF_CHECKED );
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_RULER]._cmdID, MF_CHECKED );
     }
 
-    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                   funcItem[MENU_ENABLE]._cmdID, !( stateA & MF_CHECKED ) );
-    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                   funcItem[MENU_HIGHLIGHT]._cmdID, !( stateA & MF_CHECKED ) );
-    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                   funcItem[MENU_RULER]._cmdID, !( stateA & MF_CHECKED ) );
 }
 
 void syncEnable()
 {
-    HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT stateA = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID,
-                                  MF_BYCOMMAND );
-    UINT stateC = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
-                                  MF_BYCOMMAND );
-    UINT stateR = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
-                                  MF_BYCOMMAND );
+    // HMENU hMenu = ::GetMenu( nppData._nppHandle );
+    // UINT stateA = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID,
+                                  // MF_BYCOMMAND );
+    // UINT stateC = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
+                                  // MF_BYCOMMAND );
+    // UINT stateR = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
+                                  // MF_BYCOMMAND );
 
-    if ( ( stateR & MF_CHECKED ) && ( stateC & MF_CHECKED ) )
+    // if ( ( stateR & MF_CHECKED ) && ( stateC & MF_CHECKED ) )
+    if ( g_isActiveHi && mainHRuler.GetEnable() )
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                       funcItem[MENU_ENABLE]._cmdID, !( stateA & MF_CHECKED ) );
+                       funcItem[MENU_ENABLE]._cmdID, MF_CHECKED );
 }
 
 void highlight()
 {
-    HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
-                                 MF_BYCOMMAND );
+    // HMENU hMenu = ::GetMenu( nppData._nppHandle );
+    // UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
+                                 // MF_BYCOMMAND );
 
-    if ( state & MF_CHECKED )
+    // if ( state & MF_CHECKED )
+    if ( g_isActiveHi )
     {
         disColHi();
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                       funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
+                       funcItem[MENU_HIGHLIGHT]._cmdID, MF_UNCHECKED );
     }
     else
+    {
         enColHi();
-
-    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                   funcItem[MENU_HIGHLIGHT]._cmdID, !( state & MF_CHECKED ) );
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_HIGHLIGHT]._cmdID, MF_CHECKED );
+    }
 
     syncEnable();
 }
@@ -251,21 +264,23 @@ void setColHi()
 
 void ruler()
 {
-    HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
-                                 MF_BYCOMMAND );
+    // HMENU hMenu = ::GetMenu( nppData._nppHandle );
+    // UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
+                                 // MF_BYCOMMAND );
 
-    if ( state & MF_CHECKED )
+    // if ( state & MF_CHECKED )
+    if ( mainHRuler.GetEnable() )
     {
         disRuler();
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                       funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
+                       funcItem[MENU_RULER]._cmdID, MF_UNCHECKED );
     }
     else
+    {
         enRuler();
-
-    ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                   funcItem[MENU_RULER]._cmdID, !( state & MF_CHECKED ) );
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_RULER]._cmdID, MF_CHECKED );
+    }
 
     syncEnable();
 }

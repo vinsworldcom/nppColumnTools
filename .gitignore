@@ -9,3 +9,6 @@ Release
 *.user
 *.zip
 tags
+bin/*
+bin64/*
+
