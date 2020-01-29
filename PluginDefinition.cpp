@@ -168,6 +168,9 @@ void syncEnable()
     if ( g_isActiveHi && mainHRuler.GetEnable() )
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_ENABLE]._cmdID, MF_CHECKED );
+    else
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
 }
 
 void highlight()
