@@ -1,10 +1,8 @@
-NAME
+# Notepad++ Column Tools
 
-Notepad++ Column Tools
 Author:  Michael J. Vincent
 
-
-DESCRIPTION
+## Description
 
 This Notepad++ plugin provides highlighting of the current column in the 
 same way the "Settings" -> "Preferences" -> "Editing" -> "Enable current 
@@ -30,36 +28,34 @@ startup so when you disable the plugin, the original edge column marker state
 should be returned.  I tried experimenting with the SCI_MULTIEDGE* messages 
 but they aren't in the Scintilla.h provided with the Notepad++ demo plugin.
 
+## Compiling
 
-DEPENDENCIES
-
-I compiled with MS Visual Studio Community 2017 and this seems to work 
-OK.
+I compiled with MS Visual Studio Community 2017 and this seems to work OK.
 
 For 32-bit:
-  [x86 Native Tools Command Prompt for VS 2017]
-  C:\> set Configuration=Release
-  C:\> set Platform=x86
-  C:\> msbuild
+```
+    [x86 Native Tools Command Prompt for VS 2017]
+    C:\> set Configuration=Release
+    C:\> set Platform=x86
+    C:\> msbuild
+```
 
 For 64-bit:
-  [x64 Native Tools Command Prompt for VS 2017]
-  C:\> set Configuration=Release
-  C:\> set Platform=x64
-  C:\> msbuild
+```
+    [x64 Native Tools Command Prompt for VS 2017]
+    C:\> set Configuration=Release
+    C:\> set Platform=x64
+    C:\> msbuild
+```
 
-
-INSTALLATION
+## Installation
 
 Copy the:
 
-32-bit:
-    ./bin/ColumnTools.dll
-   
-64-bit:
-    ./bin64/ColumnTools.dll
+
++ 32-bit:  ./bin/ColumnTools.dll
++ 64-bit:  ./bin64/ColumnTools.dll
 
 to the Notepad++ plugins folder:
-  - In N++ <7.6, directly in the plugins/ folder
-  - In N++ >=7.6, in a directory called ColumnTools in the plugins/ folder
-    (plugins/ColumnTools/)
+  + In N++ <7.6, directly in the plugins/ folder
+  + In N++ >=7.6, in a directory called ColumnTools in the plugins/ folder (plugins/ColumnTools/)
