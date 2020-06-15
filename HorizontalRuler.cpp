@@ -246,7 +246,8 @@ void HorizontalRuler::GetRuleArea()
     ////Scintilla??????
     this->nMarginWidth = FRAMESIZE;
 
-    for ( i = 0; i < 5; i++ )
+    int nMargins = ( int )SendMessage( this->scintillaHwnd, SCI_GETMARGINS, 0, 0 );
+    for ( i = 0; i < nMargins; i++ )
         this->nMarginWidth += ( int )SendMessage( this->scintillaHwnd,
                               SCI_GETMARGINWIDTHN, i, 0 );
 

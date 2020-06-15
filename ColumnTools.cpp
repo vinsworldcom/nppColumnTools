@@ -120,6 +120,7 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
         }
         break;
 
+/*
         case SCN_SCROLLED:
         {
             if ( notifyCode->nmhdr.hwndFrom == nppData._scintillaMainHandle )
@@ -159,6 +160,7 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                 setColHi();
         }
         break;
+*/
 
         case NPPN_WORDSTYLESUPDATED:
         {
