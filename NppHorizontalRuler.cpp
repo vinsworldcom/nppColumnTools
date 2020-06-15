@@ -117,7 +117,14 @@ LRESULT CALLBACK RulerMainWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
 
         case WM_NCLBUTTONDBLCLK:
             if ( mainHRuler.IsInit() )
-                mainHRuler.EdgeLine( GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
+            {
+                if ( GetKeyState(VK_SHIFT) & 0x8000 )
+                    mainHRuler.MultiEdgeLine( GET_X_LPARAM( lParam ), true );
+                else if ( GetKeyState(VK_CONTROL) & 0x8000 )
+                    mainHRuler.MultiEdgeLine( GET_X_LPARAM( lParam ), false );
+                else
+                    mainHRuler.EdgeLine( GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
+            }
 
             break;
 
@@ -167,7 +174,14 @@ LRESULT CALLBACK RulerSubWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
 
         case WM_NCLBUTTONDBLCLK:
             if ( subHRuler.IsInit() )
-                subHRuler.EdgeLine( GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
+            {
+                if ( GetKeyState(VK_SHIFT) & 0x8000 )
+                    subHRuler.MultiEdgeLine( GET_X_LPARAM( lParam ), true );
+                else if ( GetKeyState(VK_CONTROL) & 0x8000 )
+                    subHRuler.MultiEdgeLine( GET_X_LPARAM( lParam ), false );
+                else
+                    subHRuler.EdgeLine( GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
+            }
 
             break;
 

@@ -529,3 +529,25 @@ int HorizontalRuler::EdgeLine( int lx, int /* y */)
 
     return 0;
 }
+
+int HorizontalRuler::MultiEdgeLine( int lx, bool multiEdgeOn )
+{
+    int nSetEdgeLine;
+    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left +
+                           this->nMarginWidth ) ) / this->nCharWidth;
+
+    COLORREF cColor = ( COLORREF )::SendMessage( this->scintillaHwnd, SCI_GETEDGECOLOUR, 0, 0 );
+
+    if ( multiEdgeOn )
+    {
+        SendMessage( this->scintillaHwnd, SCI_SETEDGEMODE, EDGE_MULTILINE, 0 );
+        SendMessage( this->scintillaHwnd, SCI_MULTIEDGEADDLINE, nSetEdgeLine, cColor );
+    }
+    else
+    {
+        SendMessage( this->scintillaHwnd, SCI_MULTIEDGECLEARALL, 0, 0 );
+        SendMessage( this->scintillaHwnd, SCI_SETEDGEMODE, g_iEdgeModeOrig, 0 );
+    }
+
+    return 0;
+}
