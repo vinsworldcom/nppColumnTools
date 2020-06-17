@@ -218,18 +218,8 @@ void enColHi()
     // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - SAVE" ), MB_OK );
 }
 
-void disColHi()
+void resetEdge()
 {
-    if ( !g_isActiveHi )
-        return;
-
-    g_isActiveHi = false;
-
-    // Reset original edge properties
-    // HWND hCurScintilla = getCurScintilla();
-    // ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, iEdgeModeOrig, 0 );
-    // ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, iEdgeColOrig, 0 );
-
     // Reset original edge properties - Main
     ::SendMessage( nppData._scintillaMainHandle, SCI_SETEDGEMODE,
                    g_iEdgeModeOrig, 0 );
@@ -240,6 +230,20 @@ void disColHi()
                    g_iEdgeModeOrig, 0 );
     ::SendMessage( nppData._scintillaSecondHandle, SCI_SETEDGECOLUMN,
                    g_iEdgeColOrig, 0 );
+}
+
+void disColHi()
+{
+    if ( !g_isActiveHi )
+        return;
+
+    g_isActiveHi = false;
+    resetEdge();
+
+    // Reset original edge properties
+    // HWND hCurScintilla = getCurScintilla();
+    // ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, iEdgeModeOrig, 0 );
+    // ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, iEdgeColOrig, 0 );
 
     // Debug
     // TCHAR szBuffer[100];
@@ -279,6 +283,9 @@ void ruler()
         disRuler();
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_RULER]._cmdID, MF_UNCHECKED );
+
+        if ( ! g_isActiveHi )
+                resetEdge();
     }
     else
     {
