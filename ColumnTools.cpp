@@ -28,6 +28,8 @@ extern HorizontalRuler mainHRuler;
 extern HorizontalRuler subHRuler;
 extern HWND mainTabHwnd;
 extern HWND subTabHwnd;
+extern int g_iEdgeModeOrig;
+extern int g_iEdgeColOrig;
 
 BOOL APIENTRY DllMain( HANDLE hModule,
                        DWORD  reasonForCall,
@@ -186,6 +188,12 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
 
         case NPPN_READY:
         {
+            HWND hCurScintilla = getCurScintilla();
+            g_iEdgeModeOrig = ( int )::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0,
+                                                    0 );
+            g_iEdgeColOrig  = ( int )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
+                                                    0 );
+
             RulerWndProcSet();
             mainHRuler.Init( nppData._nppHandle, nppData._scintillaMainHandle,
                              mainTabHwnd );

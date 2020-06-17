@@ -205,10 +205,10 @@ void enColHi()
 
     // Save original edge properties
     HWND hCurScintilla = getCurScintilla();
-    g_iEdgeModeOrig = ( int )::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0,
-                                            0 );
-    g_iEdgeColOrig  = ( int )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
-                                            0 );
+    // g_iEdgeModeOrig = ( int )::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0,
+                                            // 0 );
+    // g_iEdgeColOrig  = ( int )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
+                                            // 0 );
 
     ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
     setColHi( hCurScintilla );
