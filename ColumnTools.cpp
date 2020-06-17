@@ -101,6 +101,8 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                     nHscrollPos = si.nPos;
                     mainHRuler.PaintRuler();
                 }
+                if ( g_isActiveHi )
+                    setColHi( nppData._scintillaMainHandle );
             }
             else if ( notifyCode->nmhdr.hwndFrom == nppData._scintillaSecondHandle )
             {
@@ -113,10 +115,9 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                     nHscrollPos = si.nPos;
                     subHRuler.PaintRuler();
                 }
+                if ( g_isActiveHi )
+                    setColHi( nppData._scintillaSecondHandle );
             }
-
-            if ( g_isActiveHi )
-                setColHi();
         }
         break;
 
@@ -178,8 +179,8 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                 subHRuler.PaintRuler();
             }
 
-            if ( g_isActiveHi )
-                setColHi();
+            // if ( g_isActiveHi )
+                // setColHi();
         }
         break;
 

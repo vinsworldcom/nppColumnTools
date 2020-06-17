@@ -211,7 +211,7 @@ void enColHi()
                                             0 );
 
     ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
-    setColHi();
+    setColHi( hCurScintilla );
     // Debug
     // TCHAR szBuffer[100];
     // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
@@ -247,10 +247,9 @@ void disColHi()
     // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - RESET" ), MB_OK );
 }
 
-void setColHi()
+void setColHi( HWND hCurScintilla )
 {
     // Get current cursor position
-    HWND hCurScintilla = getCurScintilla();
     bool rect = ( bool )::SendMessage( hCurScintilla, SCI_SELECTIONISRECTANGLE, 0, 0 );
     int vsp = 0;
     if ( rect )
@@ -262,7 +261,10 @@ void setColHi()
     }
 
     // Set edge column to current cursort position
-    ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, GetColumnCaretPos() + vsp, 0 );
+    int caretPos = GetColumnCaretPos( hCurScintilla );
+    caretPos += vsp;
+    ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
+    ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, caretPos, 0 );
 }
 
 void ruler()
@@ -288,7 +290,7 @@ void ruler()
     syncEnable();
 }
 
-int GetColumnCaretPos()
+int GetColumnCaretPos( HWND hCurScintilla )
 {
     int i;
 
@@ -302,7 +304,7 @@ int GetColumnCaretPos()
     int nTabSpace;
     int nLineLength;
 
-    HWND hCurScintilla = getCurScintilla();
+    // HWND hCurScintilla = getCurScintilla();
 
     nLineLength = ( int )SendMessage( hCurScintilla, SCI_GETCURLINE, 0,
                                       0 );
