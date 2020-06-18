@@ -28,6 +28,8 @@ extern HorizontalRuler mainHRuler;
 extern HorizontalRuler subHRuler;
 extern HWND mainTabHwnd;
 extern HWND subTabHwnd;
+extern int g_iEdgeModeOrig;
+extern int g_iEdgeColOrig;
 
 BOOL APIENTRY DllMain( HANDLE hModule,
                        DWORD  reasonForCall,
@@ -101,6 +103,8 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                     nHscrollPos = si.nPos;
                     mainHRuler.PaintRuler();
                 }
+                if ( g_isActiveHi )
+                    setColHi( nppData._scintillaMainHandle );
             }
             else if ( notifyCode->nmhdr.hwndFrom == nppData._scintillaSecondHandle )
             {
@@ -113,13 +117,13 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                     nHscrollPos = si.nPos;
                     subHRuler.PaintRuler();
                 }
+                if ( g_isActiveHi )
+                    setColHi( nppData._scintillaSecondHandle );
             }
-
-            if ( g_isActiveHi )
-                setColHi();
         }
         break;
 
+/*
         case SCN_SCROLLED:
         {
             if ( notifyCode->nmhdr.hwndFrom == nppData._scintillaMainHandle )
@@ -159,6 +163,7 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                 setColHi();
         }
         break;
+*/
 
         case NPPN_WORDSTYLESUPDATED:
         {
@@ -176,13 +181,19 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                 subHRuler.PaintRuler();
             }
 
-            if ( g_isActiveHi )
-                setColHi();
+            // if ( g_isActiveHi )
+                // setColHi();
         }
         break;
 
         case NPPN_READY:
         {
+            HWND hCurScintilla = getCurScintilla();
+            g_iEdgeModeOrig = ( int )::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0,
+                                                    0 );
+            g_iEdgeColOrig  = ( int )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
+                                                    0 );
+
             RulerWndProcSet();
             mainHRuler.Init( nppData._nppHandle, nppData._scintillaMainHandle,
                              mainTabHwnd );

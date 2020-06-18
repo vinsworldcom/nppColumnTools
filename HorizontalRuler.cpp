@@ -246,7 +246,8 @@ void HorizontalRuler::GetRuleArea()
     ////Scintilla??????
     this->nMarginWidth = FRAMESIZE;
 
-    for ( i = 0; i < 5; i++ )
+    int nMargins = ( int )SendMessage( this->scintillaHwnd, SCI_GETMARGINS, 0, 0 );
+    for ( i = 0; i < nMargins; i++ )
         this->nMarginWidth += ( int )SendMessage( this->scintillaHwnd,
                               SCI_GETMARGINWIDTHN, i, 0 );
 
@@ -525,6 +526,28 @@ int HorizontalRuler::EdgeLine( int lx, int /* y */)
     }
     else
         SendMessage( this->scintillaHwnd, SCI_SETEDGEMODE, EDGE_NONE, 0 );
+
+    return 0;
+}
+
+int HorizontalRuler::MultiEdgeLine( int lx, bool multiEdgeOn )
+{
+    int nSetEdgeLine;
+    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left +
+                           this->nMarginWidth ) ) / this->nCharWidth;
+
+    COLORREF cColor = ( COLORREF )::SendMessage( this->scintillaHwnd, SCI_GETEDGECOLOUR, 0, 0 );
+
+    if ( multiEdgeOn )
+    {
+        SendMessage( this->scintillaHwnd, SCI_SETEDGEMODE, EDGE_MULTILINE, 0 );
+        SendMessage( this->scintillaHwnd, SCI_MULTIEDGEADDLINE, nSetEdgeLine, cColor );
+    }
+    else
+    {
+        SendMessage( this->scintillaHwnd, SCI_MULTIEDGECLEARALL, 0, 0 );
+        SendMessage( this->scintillaHwnd, SCI_SETEDGEMODE, g_iEdgeModeOrig, 0 );
+    }
 
     return 0;
 }

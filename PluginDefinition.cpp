@@ -205,31 +205,21 @@ void enColHi()
 
     // Save original edge properties
     HWND hCurScintilla = getCurScintilla();
-    g_iEdgeModeOrig = ( int )::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0,
-                                            0 );
-    g_iEdgeColOrig  = ( int )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
-                                            0 );
+    // g_iEdgeModeOrig = ( int )::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0,
+                                            // 0 );
+    // g_iEdgeColOrig  = ( int )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
+                                            // 0 );
 
     ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
-    setColHi();
+    setColHi( hCurScintilla );
     // Debug
     // TCHAR szBuffer[100];
     // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
     // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - SAVE" ), MB_OK );
 }
 
-void disColHi()
+void resetEdge()
 {
-    if ( !g_isActiveHi )
-        return;
-
-    g_isActiveHi = false;
-
-    // Reset original edge properties
-    // HWND hCurScintilla = getCurScintilla();
-    // ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, iEdgeModeOrig, 0 );
-    // ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, iEdgeColOrig, 0 );
-
     // Reset original edge properties - Main
     ::SendMessage( nppData._scintillaMainHandle, SCI_SETEDGEMODE,
                    g_iEdgeModeOrig, 0 );
@@ -240,6 +230,20 @@ void disColHi()
                    g_iEdgeModeOrig, 0 );
     ::SendMessage( nppData._scintillaSecondHandle, SCI_SETEDGECOLUMN,
                    g_iEdgeColOrig, 0 );
+}
+
+void disColHi()
+{
+    if ( !g_isActiveHi )
+        return;
+
+    g_isActiveHi = false;
+    resetEdge();
+
+    // Reset original edge properties
+    // HWND hCurScintilla = getCurScintilla();
+    // ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, iEdgeModeOrig, 0 );
+    // ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, iEdgeColOrig, 0 );
 
     // Debug
     // TCHAR szBuffer[100];
@@ -247,10 +251,9 @@ void disColHi()
     // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - RESET" ), MB_OK );
 }
 
-void setColHi()
+void setColHi( HWND hCurScintilla )
 {
     // Get current cursor position
-    HWND hCurScintilla = getCurScintilla();
     bool rect = ( bool )::SendMessage( hCurScintilla, SCI_SELECTIONISRECTANGLE, 0, 0 );
     int vsp = 0;
     if ( rect )
@@ -262,7 +265,10 @@ void setColHi()
     }
 
     // Set edge column to current cursort position
-    ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, GetColumnCaretPos() + vsp, 0 );
+    int caretPos = GetColumnCaretPos( hCurScintilla );
+    caretPos += vsp;
+    ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
+    ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, caretPos, 0 );
 }
 
 void ruler()
@@ -277,6 +283,9 @@ void ruler()
         disRuler();
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_RULER]._cmdID, MF_UNCHECKED );
+
+        if ( ! g_isActiveHi )
+                resetEdge();
     }
     else
     {
@@ -288,7 +297,7 @@ void ruler()
     syncEnable();
 }
 
-int GetColumnCaretPos()
+int GetColumnCaretPos( HWND hCurScintilla )
 {
     int i;
 
@@ -302,7 +311,7 @@ int GetColumnCaretPos()
     int nTabSpace;
     int nLineLength;
 
-    HWND hCurScintilla = getCurScintilla();
+    // HWND hCurScintilla = getCurScintilla();
 
     nLineLength = ( int )SendMessage( hCurScintilla, SCI_GETCURLINE, 0,
                                       0 );

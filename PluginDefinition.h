@@ -80,7 +80,7 @@ void syncEnable();
 void highlight();
 void enColHi();
 void disColHi();
-void setColHi();
+void setColHi( HWND hCurScintilla );
 
 void RulerWndProcSet();
 void RulerWndProcUnset();
@@ -88,6 +88,6 @@ void RulerWndProcUnset();
 void ruler();
 void enRuler();
 void disRuler();
-int GetColumnCaretPos();
+int GetColumnCaretPos( HWND hCurScintilla );
 
 #endif //PLUGINDEFINITION_H

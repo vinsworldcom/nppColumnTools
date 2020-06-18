@@ -95,6 +95,7 @@ class HorizontalRuler
 
         bool HitDrawArea( int x, int y );
         int EdgeLine( int x, int y );
+        int MultiEdgeLine( int x, bool multiEdgeOn );
 };
 
 #endif

@@ -32,6 +32,7 @@ http://sourceforge.jp/projects/opensource/wiki/licenses%2Fzlib_libpng_license
 
 #include <Tchar.h>
 #include <Commctrl.h>
+#include <windowsx.h>
 
 extern NppData nppData;
 extern FuncItem funcItem[];
@@ -116,15 +117,22 @@ LRESULT CALLBACK RulerMainWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
 
         case WM_NCLBUTTONDBLCLK:
             if ( mainHRuler.IsInit() )
-                mainHRuler.EdgeLine( LOWORD( lParam ), HIWORD( lParam ) );
+            {
+                if ( GetKeyState(VK_SHIFT) & 0x8000 )
+                    mainHRuler.MultiEdgeLine( GET_X_LPARAM( lParam ), true );
+                else if ( GetKeyState(VK_CONTROL) & 0x8000 )
+                    mainHRuler.MultiEdgeLine( GET_X_LPARAM( lParam ), false );
+                else
+                    mainHRuler.EdgeLine( GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
+            }
 
             break;
 
         case WM_NCHITTEST:
             if ( mainHRuler.IsInit() )
             {
-                if ( mainHRuler.HitDrawArea( LOWORD( lParam ), 
-                     HIWORD( lParam ) ) )
+                if ( mainHRuler.HitDrawArea( GET_X_LPARAM( lParam ), 
+                     GET_Y_LPARAM( lParam ) ) )
                     return HTBORDER;
             }
 
@@ -166,15 +174,22 @@ LRESULT CALLBACK RulerSubWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
 
         case WM_NCLBUTTONDBLCLK:
             if ( subHRuler.IsInit() )
-                subHRuler.EdgeLine( LOWORD( lParam ), HIWORD( lParam ) );
+            {
+                if ( GetKeyState(VK_SHIFT) & 0x8000 )
+                    subHRuler.MultiEdgeLine( GET_X_LPARAM( lParam ), true );
+                else if ( GetKeyState(VK_CONTROL) & 0x8000 )
+                    subHRuler.MultiEdgeLine( GET_X_LPARAM( lParam ), false );
+                else
+                    subHRuler.EdgeLine( GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
+            }
 
             break;
 
         case WM_NCHITTEST:
             if ( subHRuler.IsInit() )
             {
-                if ( subHRuler.HitDrawArea( LOWORD( lParam ), 
-                     HIWORD( lParam ) ) )
+                if ( subHRuler.HitDrawArea( GET_X_LPARAM( lParam ), 
+                     GET_Y_LPARAM( lParam ) ) )
                     return HTBORDER;
             }
 
@@ -203,6 +218,13 @@ void enRuler()
 {
     if ( mainHRuler.GetEnable() )
         return;
+
+    int iTech = ( int )::SendMessage( getCurScintilla(), SCI_GETTECHNOLOGY, 0 , 0 );
+    if ( iTech != SC_TECHNOLOGY_DEFAULT )
+        MessageBox( nppData._nppHandle, 
+            TEXT("SC_TECHNOLOGY_DEFAULT not detected!\n\nRuler may not align with text."), 
+            TEXT("SC_TECHNOLOGY_DEFAULT not detected!"), 
+            MB_OK | MB_ICONWARNING );
 
     mainHRuler.SetEnable( 1 );
     subHRuler.SetEnable( 1 );
