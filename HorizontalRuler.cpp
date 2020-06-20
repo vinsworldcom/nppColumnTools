@@ -164,7 +164,7 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
     nBuf = _ttoi( buf );
     if ( nBuf != 0 )
     {
-        enColHi();
+        colHi( true );
         // HMENU hMenu = ::GetMenu( nppData._nppHandle );
         // UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
                                      // MF_BYCOMMAND );
@@ -178,7 +178,7 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
     nBuf = _ttoi( buf );
     if ( nBuf != 0 )
     {
-        bsUnindent(true);
+        bsUnindent( true );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                funcItem[MENU_BSUNINDENT]._cmdID, MF_CHECKED );
     }

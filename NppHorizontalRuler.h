@@ -7,4 +7,6 @@ LRESULT CALLBACK RulerMainWndProc( HWND , UINT , WPARAM ,LPARAM );
 LRESULT CALLBACK RulerSubWndProc( HWND , UINT , WPARAM ,LPARAM );
 LRESULT onHorizontalRulerMessageProc( UINT , WPARAM , LPARAM );
 
+void ruler( bool enable );
+
 #endif

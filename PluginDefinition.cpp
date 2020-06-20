@@ -17,6 +17,7 @@
 
 #include "PluginDefinition.h"
 #include "HorizontalRuler.h"
+#include "NppHorizontalRuler.h"
 #include "menuCmdID.h"
 
 //
@@ -49,7 +50,7 @@ void pluginInit( HANDLE /* hModule */ )
 //
 void pluginCleanUp()
 {
-//    disColHi();
+
 }
 
 //
@@ -72,11 +73,11 @@ void commandMenuInit()
                 false );
     setCommand( MENU_SEPARATOR1, TEXT( "-SEPARATOR-" ),         NULL,      NULL,
                 false );
-    setCommand( MENU_BSUNINDENT, TEXT( "&Backspace unindent" ), bsToggle,  NULL,
+    setCommand( MENU_BSUNINDENT, TEXT( "&Backspace unindent" ), bsToggle, NULL,
                 false );
-    setCommand( MENU_HIGHLIGHT,  TEXT( "Column &highlight" ),   highlight, NULL,
+    setCommand( MENU_HIGHLIGHT,  TEXT( "Column &highlight" ),   colHiToggle, NULL,
                 false );
-    setCommand( MENU_RULER,      TEXT( "&Ruler" ),              ruler,     NULL,
+    setCommand( MENU_RULER,      TEXT( "&Ruler" ),              rulToggle, NULL,
                 false );
 }
 
@@ -122,21 +123,11 @@ HWND getCurScintilla()
 
 void enableAll()
 {
-    // HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    // UINT stateA = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID,
-    // MF_BYCOMMAND );
-    // UINT stateC = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
-    // MF_BYCOMMAND );
-    // UINT stateR = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
-    // MF_BYCOMMAND );
-
-    // if ( ( stateA & MF_CHECKED ) || ( ( stateR & MF_CHECKED )
-    // && ( stateC & MF_CHECKED ) ) )
     if ( g_bBsUnindent && g_bIsActiveHi && mainHRuler.GetEnable() )
     {
         bsUnindent( false );
-        disColHi();
-        disRuler();
+        colHi( false );
+        ruler( false );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
@@ -149,8 +140,8 @@ void enableAll()
     else
     {
         bsUnindent( true );
-        enColHi();
-        enRuler();
+        colHi( true );
+        ruler( true );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_ENABLE]._cmdID, MF_CHECKED );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
@@ -165,15 +156,6 @@ void enableAll()
 
 void syncEnable()
 {
-    // HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    // UINT stateA = ::GetMenuState( hMenu, funcItem[MENU_ENABLE]._cmdID,
-    // MF_BYCOMMAND );
-    // UINT stateC = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
-    // MF_BYCOMMAND );
-    // UINT stateR = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
-    // MF_BYCOMMAND );
-
-    // if ( ( stateR & MF_CHECKED ) && ( stateC & MF_CHECKED ) )
     if ( g_bBsUnindent && g_bIsActiveHi && mainHRuler.GetEnable() )
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_ENABLE]._cmdID, MF_CHECKED );
@@ -206,51 +188,6 @@ void bsUnindent( bool enable )
     ::SendMessage( getCurScintilla(), SCI_SETBACKSPACEUNINDENTS, enable, 0 );
 }
 
-void highlight()
-{
-    // HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    // UINT state = ::GetMenuState( hMenu, funcItem[MENU_HIGHLIGHT]._cmdID,
-    // MF_BYCOMMAND );
-
-    // if ( state & MF_CHECKED )
-    if ( g_bIsActiveHi )
-    {
-        disColHi();
-        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                       funcItem[MENU_HIGHLIGHT]._cmdID, MF_UNCHECKED );
-    }
-    else
-    {
-        enColHi();
-        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                       funcItem[MENU_HIGHLIGHT]._cmdID, MF_CHECKED );
-    }
-
-    syncEnable();
-}
-
-void enColHi()
-{
-    if ( g_bIsActiveHi )
-        return;
-
-    g_bIsActiveHi = true;
-
-    // Save original edge properties
-    HWND hCurScintilla = getCurScintilla();
-    // g_iEdgeModeOrig = ( int )::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0,
-    // 0 );
-    // g_iEdgeColOrig  = ( int )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
-    // 0 );
-
-    ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
-    setColHi( hCurScintilla );
-    // Debug
-    // TCHAR szBuffer[100];
-    // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
-    // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - SAVE" ), MB_OK );
-}
-
 void resetEdge()
 {
     // Reset original edge properties - Main
@@ -265,23 +202,38 @@ void resetEdge()
                    g_iEdgeColOrig, 0 );
 }
 
-void disColHi()
+void colHiToggle()
 {
-    if ( !g_bIsActiveHi )
-        return;
+    if ( g_bIsActiveHi )
+    {
+        colHi( false );
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_HIGHLIGHT]._cmdID, MF_UNCHECKED );
+    }
+    else
+    {
+        colHi( true );
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+                       funcItem[MENU_HIGHLIGHT]._cmdID, MF_CHECKED );
+    }
 
-    g_bIsActiveHi = false;
-    resetEdge();
+    syncEnable();
+}
 
-    // Reset original edge properties
-    // HWND hCurScintilla = getCurScintilla();
-    // ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, iEdgeModeOrig, 0 );
-    // ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, iEdgeColOrig, 0 );
+void colHi( bool enable )
+{
+    g_bIsActiveHi = enable;
 
-    // Debug
-    // TCHAR szBuffer[100];
-    // wsprintf( szBuffer, TEXT( "Mode = %i\n Column = %i" ), iEdgeModeOrig, iEdgeColOrig );
-    // ::MessageBox( NULL, szBuffer, TEXT( "Column Highlight - RESET" ), MB_OK );
+    HWND hCurScintilla = getCurScintilla();
+    if ( enable )
+    {
+        ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
+        setColHi( hCurScintilla );
+    }
+    else
+    {
+        resetEdge();
+    }
 }
 
 void setColHi( HWND hCurScintilla )
@@ -308,16 +260,11 @@ void setColHi( HWND hCurScintilla )
     ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, caretPos, 0 );
 }
 
-void ruler()
+void rulToggle()
 {
-    // HMENU hMenu = ::GetMenu( nppData._nppHandle );
-    // UINT state = ::GetMenuState( hMenu, funcItem[MENU_RULER]._cmdID,
-    // MF_BYCOMMAND );
-
-    // if ( state & MF_CHECKED )
     if ( mainHRuler.GetEnable() )
     {
-        disRuler();
+        ruler( false );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_RULER]._cmdID, MF_UNCHECKED );
 
@@ -326,7 +273,7 @@ void ruler()
     }
     else
     {
-        enRuler();
+        ruler( true );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_RULER]._cmdID, MF_CHECKED );
     }
