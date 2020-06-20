@@ -22,14 +22,14 @@
 extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
 
-extern bool g_isActiveHi;
-
+extern bool g_bBsUnindent;
+extern bool g_bIsActiveHi;
+extern int  g_iEdgeModeOrig;
+extern int  g_iEdgeColOrig;
 extern HorizontalRuler mainHRuler;
 extern HorizontalRuler subHRuler;
 extern HWND mainTabHwnd;
 extern HWND subTabHwnd;
-extern int g_iEdgeModeOrig;
-extern int g_iEdgeColOrig;
 
 BOOL APIENTRY DllMain( HANDLE hModule,
                        DWORD  reasonForCall,
@@ -81,15 +81,6 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
 
     switch ( notifyCode->nmhdr.code )
     {
-/*
-        case SCN_PAINTED:
-        {
-            if ( g_isActiveHi )
-                setColHi();
-        }
-        break;
-*/
-
         case SCN_UPDATEUI:
         {
             if ( notifyCode->nmhdr.hwndFrom == nppData._scintillaMainHandle )
@@ -103,7 +94,7 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                     nHscrollPos = si.nPos;
                     mainHRuler.PaintRuler();
                 }
-                if ( g_isActiveHi )
+                if ( g_bIsActiveHi )
                     setColHi( nppData._scintillaMainHandle );
             }
             else if ( notifyCode->nmhdr.hwndFrom == nppData._scintillaSecondHandle )
@@ -117,53 +108,11 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                     nHscrollPos = si.nPos;
                     subHRuler.PaintRuler();
                 }
-                if ( g_isActiveHi )
+                if ( g_bIsActiveHi )
                     setColHi( nppData._scintillaSecondHandle );
             }
         }
         break;
-
-/*
-        case SCN_SCROLLED:
-        {
-            if ( notifyCode->nmhdr.hwndFrom == nppData._scintillaMainHandle )
-            {
-                if ( mainHRuler.IsInit() )
-                {
-                    memset( &si, 0, sizeof( SCROLLINFO ) );
-                    si.cbSize = sizeof( SCROLLINFO );
-                    si.fMask = SIF_POS;// SIF_TRACKPOS POS????????
-                    GetScrollInfo( nppData._scintillaMainHandle, SB_HORZ, &si );
-
-                    if ( si.nPos != nHscrollPos )
-                    {
-                        nHscrollPos = si.nPos;
-                        mainHRuler.PaintRuler();
-                    }
-                }
-            }
-            else if ( notifyCode->nmhdr.hwndFrom == nppData._scintillaSecondHandle )
-            {
-                if ( subHRuler.IsInit() )
-                {
-                    memset( &si, 0, sizeof( SCROLLINFO ) );
-                    si.cbSize = sizeof( SCROLLINFO );
-                    si.fMask = SIF_POS;// SIF_TRACKPOS POS????????
-                    GetScrollInfo( nppData._scintillaSecondHandle, SB_HORZ, &si );
-
-                    if ( si.nPos != nHscrollPos )
-                    {
-                        nHscrollPos = si.nPos;
-                        subHRuler.PaintRuler();
-                    }
-                }
-            }
-
-            if ( g_isActiveHi )
-                setColHi();
-        }
-        break;
-*/
 
         case NPPN_WORDSTYLESUPDATED:
         {
@@ -180,9 +129,6 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
                 subHRuler.SecureArea();
                 subHRuler.PaintRuler();
             }
-
-            // if ( g_isActiveHi )
-                // setColHi();
         }
         break;
 
@@ -210,6 +156,14 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
             syncEnable();
 
             SendMessage( nppData._nppHandle, WM_SIZE, 0, 0 );
+        }
+        break;
+
+        case NPPN_FILEOPENED:
+        case NPPN_FILECLOSED:
+        case NPPN_BUFFERACTIVATED:
+        {
+            bsUnindent( g_bBsUnindent );
         }
         break;
 

@@ -42,7 +42,8 @@ extern NppData nppData;
 extern FuncItem funcItem[];
 
 extern WNDPROC oldWndProc;
-extern bool g_isActiveHi;
+extern bool g_bIsActiveHi;
+extern bool g_bBsUnindent;
 extern int  g_iEdgeModeOrig;
 extern int  g_iEdgeColOrig;
 
@@ -100,12 +101,21 @@ HorizontalRuler::~HorizontalRuler()
     Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ),
                                    TEXT( "Column" ), g_iEdgeColOrig );
 
-    if ( g_isActiveHi == true )
+    if ( g_bIsActiveHi == true )
         nBuf = 1;
     else
         nBuf = 0;
 
     Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ), TEXT( "Enable" ),
+                                   nBuf );
+
+    // BackspaceUnindent
+    if ( g_bBsUnindent == true )
+        nBuf = 1;
+    else
+        nBuf = 0;
+
+    Ini::getInstance()->writeDate( TEXT( "BackspaceUnindent" ), TEXT( "Enable" ),
                                    nBuf );
 }
 
@@ -152,7 +162,6 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
     Ini::getInstance()->readDate( TEXT( "ColumnHighlight" ), TEXT( "Enable" ),
                                   buf, MAX_PATH );
     nBuf = _ttoi( buf );
-
     if ( nBuf != 0 )
     {
         enColHi();
@@ -161,6 +170,17 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
                                      // MF_BYCOMMAND );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                funcItem[MENU_HIGHLIGHT]._cmdID, MF_CHECKED );
+    }
+
+    // BackspaceUnindent
+    Ini::getInstance()->readDate( TEXT( "BackspaceUnindent" ), TEXT( "Enable" ),
+                                  buf, MAX_PATH );
+    nBuf = _ttoi( buf );
+    if ( nBuf != 0 )
+    {
+        bsUnindent(true);
+        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
+               funcItem[MENU_BSUNINDENT]._cmdID, MF_CHECKED );
     }
 
     return;
