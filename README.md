@@ -1,7 +1,5 @@
 # Notepad++ Column Tools
 
-Author:  Michael J. Vincent
-
 ## Description
 
 This Notepad++ plugin provides highlighting of the current column in the 
@@ -16,17 +14,9 @@ about 8 hours while looking at the demo plugin, the Scintilla documentation,
 other examples of working plugins and my little (to almost non-existent) 
 experience with C/C++.
 
-The ruler functionality is "borrowed" from the NppHorizontalRuler plugin 
-discussed here:
-
-https://notepad-plus-plus.org/community/topic/13369/a-notepad-beautiful-ruler-plugin-finally
-
-To be fair, this plugin doesn't really "highlight" the current column; rather, 
-uses the edge column marker to do the job.  Thus, if you're using the edge 
-column marker, you "lose" it, but this plugin should remember the state on 
-startup so when you disable the plugin, the original edge column marker state 
-should be returned.  I tried experimenting with the SCI_MULTIEDGE* messages 
-but they aren't in the Scintilla.h provided with the Notepad++ demo plugin.
+The ruler functionality is "borrowed" from the 
+[NppHorizontalRuler](https://notepad-plus-plus.org/community/topic/13369/a-notepad-beautiful-ruler-plugin-finally) 
+plugin.
 
 ## Compiling
 
@@ -52,10 +42,54 @@ For 64-bit:
 
 Copy the:
 
-
 + 32-bit:  ./bin/ColumnTools.dll
 + 64-bit:  ./bin64/ColumnTools.dll
 
 to the Notepad++ plugins folder:
   + In N++ <7.6, directly in the plugins/ folder
   + In N++ >=7.6, in a directory called ColumnTools in the plugins/ folder (plugins/ColumnTools/)
+
+## Usage
+
+Plugins => Column Tools and select the option(s) you want.
+
+### Backspace Unindent
+
+This implements the Scintilla 
+[SCI_SETBACKSPACEUNINDENTS](https://www.scintilla.org/ScintillaDoc.html#SCI_SETBACKSPACEUNINDENTS)
+feature.
+
+### Column Highlight
+
+To be fair, this plugin doesn't really "highlight" the current column; rather, 
+uses the edge column marker to do the job.  Thus, if you're using the edge 
+column marker, you "lose" it, but this plugin should remember the state on 
+startup so when you disable the plugin, the original edge column marker state 
+should be returned.
+
+### Ruler
+
+The horizonal ruler displays across the top of each tab in each Scintilla view 
+in Notepad++ (both main and secondary, if visible).
+
+#### Set Vertical Line
+
+Double-click on the ruler to set a vertical line at that column.  If Column 
+Highlight is enabled, the vertical line will not stay and will move with the 
+cursor.  This is a Scintilla limitation and can not be "fixed" with this 
+plugin.  To keep the vertical line in position, disable Column Highlight.
+
+#### Multiple Vertical Lines (Scintilla EDGE_MULTILINE)
+
+For [multiple vertical lines](https://www.scintilla.org/ScintillaDoc.html#SCI_MULTIEDGEADDLINE)
+SHIFT+double-click in the ruler.  Again, if Column Highlight is enabled, 
+the vertical lines will not stay and will move with the cursor.  This is a 
+Scintilla limitation and can not be "fixed" with this plugin.  To keep the 
+vertical lines in position, disable Column Highlight.  To remove all 
+vertical lines, use CTRL+double-click in the ruler.  Again, this is a 
+[Scintilla limitation](https://www.scintilla.org/ScintillaDoc.html#SCI_MULTIEDGECLEARALL); 
+individual vertical lines cannot be removed, it's all or nothing.
+
+**NOTE:** The ruler does not line up correctly unless 
+[SC_TECHNOLOGY_DEFAULT](https://www.scintilla.org/ScintillaDoc.html#SCI_GETTECHNOLOGY) 
+is set.

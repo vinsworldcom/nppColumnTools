@@ -36,12 +36,13 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("&Column Tools");
 //
 // Here define the number of your plugin commands
 //
-const int nbFunc = 4;
+const int nbFunc = 5;
 
 #define MENU_ENABLE     0
 #define MENU_SEPARATOR1 1
-#define MENU_HIGHLIGHT  2
-#define MENU_RULER      3
+#define MENU_BSUNINDENT 2
+#define MENU_HIGHLIGHT  3
+#define MENU_RULER      4
 
 //
 // Initialization of your plugin data
@@ -77,17 +78,16 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 HWND getCurScintilla();
 void enableAll();
 void syncEnable();
-void highlight();
-void enColHi();
-void disColHi();
+void bsToggle();
+void bsUnindent( bool enable );
+void colHiToggle();
+void colHi( bool enable );
 void setColHi( HWND hCurScintilla );
 
 void RulerWndProcSet();
 void RulerWndProcUnset();
 
-void ruler();
-void enRuler();
-void disRuler();
+void rulToggle();
 int GetColumnCaretPos( HWND hCurScintilla );
 
 #endif //PLUGINDEFINITION_H

@@ -131,7 +131,7 @@ LRESULT CALLBACK RulerMainWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
         case WM_NCHITTEST:
             if ( mainHRuler.IsInit() )
             {
-                if ( mainHRuler.HitDrawArea( GET_X_LPARAM( lParam ), 
+                if ( mainHRuler.HitDrawArea( GET_X_LPARAM( lParam ),
                      GET_Y_LPARAM( lParam ) ) )
                     return HTBORDER;
             }
@@ -188,7 +188,7 @@ LRESULT CALLBACK RulerSubWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
         case WM_NCHITTEST:
             if ( subHRuler.IsInit() )
             {
-                if ( subHRuler.HitDrawArea( GET_X_LPARAM( lParam ), 
+                if ( subHRuler.HitDrawArea( GET_X_LPARAM( lParam ),
                      GET_Y_LPARAM( lParam ) ) )
                     return HTBORDER;
             }
@@ -214,29 +214,26 @@ LRESULT CALLBACK RulerSubWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
     return CallWindowProc( subOldWndProc, hwnd, uMsg, wParam, lParam );
 }
 
-void enRuler()
+void ruler( bool enable )
 {
-    if ( mainHRuler.GetEnable() )
-        return;
+    if ( enable )
+    {
+        int iTech = ( int )::SendMessage( getCurScintilla(), SCI_GETTECHNOLOGY, 0 , 0 );
+        if ( iTech != SC_TECHNOLOGY_DEFAULT )
+            MessageBox( nppData._nppHandle,
+                TEXT("SC_TECHNOLOGY_DEFAULT not detected!\n\nRuler may not align with text."),
+                TEXT("SC_TECHNOLOGY_DEFAULT not detected!"),
+                MB_OK | MB_ICONWARNING );
 
-    int iTech = ( int )::SendMessage( getCurScintilla(), SCI_GETTECHNOLOGY, 0 , 0 );
-    if ( iTech != SC_TECHNOLOGY_DEFAULT )
-        MessageBox( nppData._nppHandle, 
-            TEXT("SC_TECHNOLOGY_DEFAULT not detected!\n\nRuler may not align with text."), 
-            TEXT("SC_TECHNOLOGY_DEFAULT not detected!"), 
-            MB_OK | MB_ICONWARNING );
+        mainHRuler.SetEnable( 1 );
+        subHRuler.SetEnable( 1 );
+        mainHRuler.SendSizeToMain();
+    }
+    else
+    {
+        mainHRuler.SetEnable( 0 );
+        subHRuler.SetEnable( 0 );
+        mainHRuler.SendSizeToMain();
 
-    mainHRuler.SetEnable( 1 );
-    subHRuler.SetEnable( 1 );
-    mainHRuler.SendSizeToMain();
-}
-
-void disRuler()
-{
-    if ( !mainHRuler.GetEnable() )
-        return;
-
-    mainHRuler.SetEnable( 0 );
-    subHRuler.SetEnable( 0 );
-    mainHRuler.SendSizeToMain();
+    }
 }
