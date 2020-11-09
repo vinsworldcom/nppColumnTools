@@ -44,6 +44,7 @@ extern FuncItem funcItem[];
 extern WNDPROC oldWndProc;
 extern bool g_bIsActiveHi;
 extern bool g_bBsUnindent;
+extern bool g_bIndentGuideLF;
 extern int  g_iEdgeModeOrig;
 extern int  g_iEdgeColOrig;
 
@@ -117,6 +118,15 @@ HorizontalRuler::~HorizontalRuler()
 
     Ini::getInstance()->writeDate( TEXT( "BackspaceUnindent" ), TEXT( "Enable" ),
                                    nBuf );
+
+    // Indent Guides LookForward
+    if ( g_bIndentGuideLF == true )
+        nBuf = 1;
+    else
+        nBuf = 0;
+
+    Ini::getInstance()->writeDate( TEXT( "IndentGuidesLookForward" ), TEXT( "Enable" ),
+                                   nBuf );
 }
 
 void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
@@ -177,11 +187,16 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
                                   buf, MAX_PATH );
     nBuf = _ttoi( buf );
     if ( nBuf != 0 )
-    {
-        bsUnindent( true );
-        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-               funcItem[MENU_BSUNINDENT]._cmdID, MF_CHECKED );
-    }
+        g_bBsUnindent = true;
+
+    // Indent Guides LookForward
+    Ini::getInstance()->readDate( TEXT( "IndentGuidesLookForward" ), TEXT( "Enable" ),
+                                  buf, MAX_PATH );
+    nBuf = _ttoi( buf );
+    if ( nBuf != 0 )
+        g_bIndentGuideLF = true;
+
+    doBufferSets();
 
     return;
 }

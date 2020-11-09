@@ -170,6 +170,7 @@
     <ClCompile Include="HorizontalRuler.cpp" />
     <ClCompile Include="NppHorizontalRuler.cpp" />
     <ClCompile Include="Ini.cpp" />
+    <ClCompile Include="SettingsDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -181,6 +182,7 @@
     <ClInclude Include="NppHorizontalRuler.h" />
     <ClInclude Include="Ini.h" />
     <ClInclude Include="Scintilla.h" />
+    <ClInclude Include="SettingsDlg.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ColumnTools.rc" />
