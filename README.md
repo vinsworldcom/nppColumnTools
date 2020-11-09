@@ -53,12 +53,6 @@ to the Notepad++ plugins folder:
 
 Plugins => Column Tools and select the option(s) you want.
 
-### Backspace Unindent
-
-This implements the Scintilla 
-[SCI_SETBACKSPACEUNINDENTS](https://www.scintilla.org/ScintillaDoc.html#SCI_SETBACKSPACEUNINDENTS)
-feature.
-
 ### Column Highlight
 
 To be fair, this plugin doesn't really "highlight" the current column; rather, 
@@ -93,3 +87,19 @@ individual vertical lines cannot be removed, it's all or nothing.
 **NOTE:** The ruler does not line up correctly unless 
 [SC_TECHNOLOGY_DEFAULT](https://www.scintilla.org/ScintillaDoc.html#SCI_GETTECHNOLOGY) 
 is set.
+
+### Settings
+
+#### Backspace Unindent
+
+This implements the Scintilla 
+[SCI_SETBACKSPACEUNINDENTS](https://www.scintilla.org/ScintillaDoc.html#SCI_SETBACKSPACEUNINDENTS)
+feature.
+
+#### Indent Guides LookForward
+
+This implements the Scintilla 
+[SCI_SETINDENTATIONGUIDES](https://www.scintilla.org/ScintillaDoc.html#SCI_SETINDENTATIONGUIDES)
+feature to `SC_IV_LOOKFORWARD` which is supposedly "good for Python", but seems 
+to be good for all languages as well despite what it says for `SC_IV_LOOKBOTH` 
+being "good for most languages".
