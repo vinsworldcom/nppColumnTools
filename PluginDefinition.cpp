@@ -16,6 +16,7 @@
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "PluginDefinition.h"
+#include "SettingsDlg.h"
 #include "HorizontalRuler.h"
 #include "NppHorizontalRuler.h"
 #include "menuCmdID.h"
@@ -29,9 +30,11 @@ FuncItem funcItem[nbFunc];
 // The data of Notepad++ that you can use in your plugin commands
 //
 NppData nppData;
+HINSTANCE g_hInst;
 
-bool g_bIsActiveHi = false;
-bool g_bBsUnindent = false;
+bool g_bIsActiveHi    = false;
+bool g_bBsUnindent    = false;
+bool g_bIndentGuideLF = false;
 int  g_iEdgeModeOrig;
 int  g_iEdgeColOrig;
 
@@ -69,15 +72,17 @@ void commandMenuInit()
     //            ShortcutKey *shortcut,          // optional. Define a shortcut to trigger this command
     //            bool check0nInit                // optional. Make this menu item be checked visually
     //            );
-    setCommand( MENU_ENABLE,     TEXT( "&Enable all" ),         enableAll, NULL,
-                false );
-    setCommand( MENU_SEPARATOR1, TEXT( "-SEPARATOR-" ),         NULL,      NULL,
-                false );
-    setCommand( MENU_BSUNINDENT, TEXT( "&Backspace unindent" ), bsToggle, NULL,
-                false );
-    setCommand( MENU_HIGHLIGHT,  TEXT( "Column &highlight" ),   colHiToggle, NULL,
-                false );
-    setCommand( MENU_RULER,      TEXT( "&Ruler" ),              rulToggle, NULL,
+    setCommand( MENU_ENABLE,     TEXT( "&Enable all" ),       enableAll, NULL,
+                false );                                      
+    setCommand( MENU_SEPARATOR1, TEXT( "-SEPARATOR-" ),       NULL,      NULL,
+                false );                                      
+    setCommand( MENU_HIGHLIGHT,  TEXT( "Column &highlight" ), colHiToggle, NULL,
+                false );                                      
+    setCommand( MENU_RULER,      TEXT( "&Ruler" ),            rulToggle, NULL,
+                false );                                      
+    setCommand( MENU_SEPARATOR1, TEXT( "-SEPARATOR-" ),       NULL,      NULL,
+                false );                                      
+    setCommand( MENU_SETTINGS,   TEXT( "&Settings" ),         doSettings, NULL,
                 false );
 }
 
@@ -123,15 +128,12 @@ HWND getCurScintilla()
 
 void enableAll()
 {
-    if ( g_bBsUnindent && g_bIsActiveHi && mainHRuler.GetEnable() )
+    if ( g_bIsActiveHi && mainHRuler.GetEnable() )
     {
-        bsUnindent( false );
         colHi( false );
         ruler( false );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
-        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                       funcItem[MENU_BSUNINDENT]._cmdID, MF_UNCHECKED );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_HIGHLIGHT]._cmdID, MF_UNCHECKED );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
@@ -139,13 +141,10 @@ void enableAll()
     }
     else
     {
-        bsUnindent( true );
         colHi( true );
         ruler( true );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_ENABLE]._cmdID, MF_CHECKED );
-        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                       funcItem[MENU_BSUNINDENT]._cmdID, MF_CHECKED );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_HIGHLIGHT]._cmdID, MF_CHECKED );
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
@@ -156,7 +155,7 @@ void enableAll()
 
 void syncEnable()
 {
-    if ( g_bBsUnindent && g_bIsActiveHi && mainHRuler.GetEnable() )
+    if ( g_bIsActiveHi && mainHRuler.GetEnable() )
         ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
                        funcItem[MENU_ENABLE]._cmdID, MF_CHECKED );
     else
@@ -164,28 +163,12 @@ void syncEnable()
                        funcItem[MENU_ENABLE]._cmdID, MF_UNCHECKED );
 }
 
-void bsToggle()
+void doBufferSets()
 {
-    if ( g_bBsUnindent )
-    {
-        bsUnindent( false );
-        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                       funcItem[MENU_BSUNINDENT]._cmdID, MF_UNCHECKED );
-    }
-    else
-    {
-        bsUnindent( true );
-        ::SendMessage( nppData._nppHandle, NPPM_SETMENUITEMCHECK,
-                       funcItem[MENU_BSUNINDENT]._cmdID, MF_CHECKED );
-    }
+    ::SendMessage( getCurScintilla(), SCI_SETBACKSPACEUNINDENTS, g_bBsUnindent, 0 );
 
-    syncEnable();
-}
-
-void bsUnindent( bool enable )
-{
-    g_bBsUnindent = enable;
-    ::SendMessage( getCurScintilla(), SCI_SETBACKSPACEUNINDENTS, enable, 0 );
+    if ( g_bIndentGuideLF )
+        ::SendMessage( getCurScintilla(), SCI_SETINDENTATIONGUIDES, SC_IV_LOOKFORWARD, 0 );
 }
 
 void resetEdge()

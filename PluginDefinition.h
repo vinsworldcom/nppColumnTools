@@ -22,13 +22,15 @@
 // All difinitions of plugin interface
 //
 #include "PluginInterface.h"
+#include "resource.h"
 
 //-------------------------------------//
 //-- STEP 1. DEFINE YOUR PLUGIN NAME --//
 //-------------------------------------//
 // Here define your plugin name
 //
-const TCHAR NPP_PLUGIN_NAME[] = TEXT("&Column Tools");
+const TCHAR NPP_PLUGIN_NAME[] = TEXT( INTERNAL_NAME );
+const TCHAR NPP_PLUGIN_FILENAME[] = TEXT( FILENAME );
 
 //-----------------------------------------------//
 //-- STEP 2. DEFINE YOUR PLUGIN COMMAND NUMBER --//
@@ -36,13 +38,14 @@ const TCHAR NPP_PLUGIN_NAME[] = TEXT("&Column Tools");
 //
 // Here define the number of your plugin commands
 //
-const int nbFunc = 5;
+const int nbFunc = 6;
 
 #define MENU_ENABLE     0
 #define MENU_SEPARATOR1 1
-#define MENU_BSUNINDENT 2
-#define MENU_HIGHLIGHT  3
-#define MENU_RULER      4
+#define MENU_HIGHLIGHT  2
+#define MENU_RULER      3
+#define MENU_SEPARATOR2 4
+#define MENU_SETTINGS   5
 
 //
 // Initialization of your plugin data
@@ -78,15 +81,14 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 HWND getCurScintilla();
 void enableAll();
 void syncEnable();
-void bsToggle();
-void bsUnindent( bool enable );
 void colHiToggle();
 void colHi( bool enable );
 void setColHi( HWND hCurScintilla );
 
+void doBufferSets();
+
 void RulerWndProcSet();
 void RulerWndProcUnset();
-
 void rulToggle();
 int GetColumnCaretPos( HWND hCurScintilla );
 

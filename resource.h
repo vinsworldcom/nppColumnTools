@@ -6,22 +6,37 @@
 
 /* VERSION DEFINITIONS */
 #define VER_MAJOR   1
-#define VER_MINOR   3
-#define VER_RELEASE 7
+#define VER_MINOR   4
+#define VER_RELEASE 1
 #define VER_BUILD   1
 #define VER_STRING  STR(VER_MAJOR) "." STR(VER_MINOR) "." STR(VER_RELEASE) "." STR(VER_BUILD)
 
-#define FILE_DESCRIPTION  "Notepad++ Plugin providing column tools for highlighting and ruler."
-#define INTERNAL_NAME	  "Notepad++ Column Tools"
+#define FILE_DESCRIPTION  "Notepad++ Plugin for column highlighting and ruler."
+#define INTERNAL_NAME     "&Column Tools"
+#define FILENAME          "ColumnTools"
 
-#define COMPANY_NAME	  "Vin's World"
-#define FILE_VERSION	  VER_STRING
-#define LEGAL_COPYRIGHT	  "Copyright (C) VinsWorld. All Rights Reserved."
+#define COMPANY_NAME      "Vin's World"
+#define FILE_VERSION      VER_STRING
+#define LEGAL_COPYRIGHT   "Copyright (C) VinsWorld. All Rights Reserved."
 #define LEGAL_TRADEMARKS  ""
-#define ORIGINAL_FILENAME "ColumnTools"
-#define PRODUCT_NAME	  "COLUMNTOOLS"
-#define PRODUCT_VERSION	  VER_STRING
+#define ORIGINAL_FILENAME FILENAME ".dll"
+#define PRODUCT_NAME      "Column Tools"
+#define PRODUCT_VERSION   VER_STRING
 
 /* ADDITIONAL DEFINITIONS */
+
+// Settings
+#ifndef IDC_STATIC
+#define IDC_STATIC  -1
+#endif
+
+#define IDD_SETTINGS      2600
+
+#define IDB_OK                 (IDD_SETTINGS + 1)
+
+#define IDC_CHK_BSU            (IDD_SETTINGS + 2)
+#define IDC_CHK_IGLF           (IDD_SETTINGS + 3)
+
+#define IDC_STC_VER            (IDD_SETTINGS + 4)
 
 #endif

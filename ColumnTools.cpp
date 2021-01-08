@@ -20,6 +20,7 @@
 #include "NppHorizontalRuler.h"
 
 extern FuncItem funcItem[nbFunc];
+extern HINSTANCE g_hInst;
 extern NppData nppData;
 
 extern bool g_bBsUnindent;
@@ -38,6 +39,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     switch ( reasonForCall )
     {
         case DLL_PROCESS_ATTACH:
+            g_hInst = ( HINSTANCE )hModule;
             pluginInit( hModule );
             break;
 
@@ -163,7 +165,7 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
         case NPPN_FILECLOSED:
         case NPPN_BUFFERACTIVATED:
         {
-            bsUnindent( g_bBsUnindent );
+            doBufferSets();
         }
         break;
 
