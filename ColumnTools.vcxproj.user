@@ -1,0 +1,19 @@
+<Project>
+
+  <!--
+    Rename PROJECTNAME to the same as the *.vcxproj file in your project.
+    
+    Or, import into that file by adding before the last closing tag:
+  
+    <Import Project="PROJECTNAME.vcxproj.user"/>
+
+    Then, call with:
+    
+      msbuild /target:zip
+  -->
+
+  <Target Name="Zip" DependsOnTargets="Build">
+    <Exec Command="for /f %%i in ('powershell -Command &quot;(Get-Item $(OutDir)$(TargetName)$(TargetExt)).VersionInfo.ProductVersion&quot;') do del    $(OutDir)$(TargetName)-v%%i-%Platform%.zip"/>
+    <Exec Command="for /f %%i in ('powershell -Command &quot;(Get-Item $(OutDir)$(TargetName)$(TargetExt)).VersionInfo.ProductVersion&quot;') do zip -j $(OutDir)$(TargetName)-v%%i-%Platform%.zip $(OutDir)$(TargetName)$(TargetExt)"/>
+  </Target>
+</Project>
