@@ -116,6 +116,7 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
         }
         break;
 
+        case SCN_ZOOM:
         case NPPN_WORDSTYLESUPDATED:
         {
             if ( mainHRuler.IsInit() )
