@@ -22,6 +22,7 @@
 // All difinitions of plugin interface
 //
 #include "PluginInterface.h"
+#include "Scintilla.h"
 #include "resource.h"
 
 //-------------------------------------//
@@ -90,6 +91,6 @@ void doBufferSets();
 void RulerWndProcSet();
 void RulerWndProcUnset();
 void rulToggle();
-int GetColumnCaretPos( HWND hCurScintilla );
+Sci_Position GetColumnCaretPos( HWND hCurScintilla );
 
 #endif //PLUGINDEFINITION_H

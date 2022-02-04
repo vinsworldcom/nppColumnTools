@@ -18,6 +18,7 @@
 #include "PluginDefinition.h"
 #include "HorizontalRuler.h"
 #include "NppHorizontalRuler.h"
+#include "Scintilla.h"
 
 extern FuncItem funcItem[nbFunc];
 extern HINSTANCE g_hInst;
@@ -26,7 +27,7 @@ extern NppData nppData;
 extern bool g_bBsUnindent;
 extern bool g_bIsActiveHi;
 extern int  g_iEdgeModeOrig;
-extern int  g_iEdgeColOrig;
+extern Sci_Position g_iEdgeColOrig;
 extern HorizontalRuler mainHRuler;
 extern HorizontalRuler subHRuler;
 extern HWND mainTabHwnd;
@@ -140,7 +141,7 @@ extern "C" __declspec( dllexport ) void beNotified( SCNotification *notifyCode )
             HWND hCurScintilla = getCurScintilla();
             g_iEdgeModeOrig = ( int )::SendMessage( hCurScintilla, SCI_GETEDGEMODE, 0,
                                                     0 );
-            g_iEdgeColOrig  = ( int )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
+            g_iEdgeColOrig  = ( Sci_Position )::SendMessage( hCurScintilla, SCI_GETEDGECOLUMN, 0,
                                                     0 );
 
             RulerWndProcSet();

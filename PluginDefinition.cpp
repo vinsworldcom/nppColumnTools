@@ -20,6 +20,7 @@
 #include "HorizontalRuler.h"
 #include "NppHorizontalRuler.h"
 #include "menuCmdID.h"
+#include "Scintilla.h"
 
 //
 // The plugin data that Notepad++ needs
@@ -36,7 +37,7 @@ bool g_bIsActiveHi    = false;
 bool g_bBsUnindent    = false;
 bool g_bIndentGuideLF = false;
 int  g_iEdgeModeOrig;
-int  g_iEdgeColOrig;
+Sci_Position g_iEdgeColOrig;
 
 extern HorizontalRuler mainHRuler;
 
@@ -224,20 +225,20 @@ void setColHi( HWND hCurScintilla )
     // Get current cursor position
     bool rect = ( bool )::SendMessage( hCurScintilla, SCI_SELECTIONISRECTANGLE,
                                        0, 0 );
-    int vsp = 0;
+    Sci_Position vsp = 0;
 
     if ( rect )
-        vsp = ( int )::SendMessage( hCurScintilla,
+        vsp = ( Sci_Position )::SendMessage( hCurScintilla,
                                     SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE, 0, 0 );
     else
     {
         int sel = ( int )::SendMessage( hCurScintilla, SCI_GETMAINSELECTION, 0, 0 );
-        vsp = ( int )::SendMessage( hCurScintilla,
+        vsp = ( Sci_Position )::SendMessage( hCurScintilla,
                                     SCI_GETSELECTIONNCARETVIRTUALSPACE, sel, 0 );
     }
 
     // Set edge column to current cursort position
-    int caretPos = GetColumnCaretPos( hCurScintilla );
+    Sci_Position caretPos = GetColumnCaretPos( hCurScintilla );
     caretPos += vsp;
     ::SendMessage( hCurScintilla, SCI_SETEDGEMODE, EDGE_LINE, 0 );
     ::SendMessage( hCurScintilla, SCI_SETEDGECOLUMN, caretPos, 0 );
@@ -264,7 +265,7 @@ void rulToggle()
     syncEnable();
 }
 
-int GetColumnCaretPos( HWND hCurScintilla )
+Sci_Position GetColumnCaretPos( HWND hCurScintilla )
 {
     int i;
 
@@ -274,16 +275,15 @@ int GetColumnCaretPos( HWND hCurScintilla )
     int nWideExchange;
     int nAnsiExchange;
 
-    int nCaret;
+    Sci_Position nCaret, nLineLength;
     int nTabSpace;
-    int nLineLength;
 
     // HWND hCurScintilla = getCurScintilla();
 
-    nLineLength = ( int )SendMessage( hCurScintilla, SCI_GETCURLINE, 0,
+    nLineLength = ( Sci_Position )SendMessage( hCurScintilla, SCI_GETCURLINE, 0,
                                       0 );
     curLin = new char[nLineLength];
-    nCaret = ( int )SendMessage( hCurScintilla, SCI_GETCURLINE,
+    nCaret = ( Sci_Position )SendMessage( hCurScintilla, SCI_GETCURLINE,
                                  nLineLength, ( LPARAM )curLin );
     nTabSpace = ( int )SendMessage( hCurScintilla, SCI_GETTABWIDTH, 0,
                                     0 );
