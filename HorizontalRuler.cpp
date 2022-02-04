@@ -32,6 +32,7 @@ http://sourceforge.jp/projects/opensource/wiki/licenses%2Fzlib_libpng_license
 #include "menuCmdID.h"
 #include "ini.h"
 #include "PluginDefinition.h"
+#include "Scintilla.h"
 
 #include <windows.h>
 #include <Commctrl.h>
@@ -46,7 +47,7 @@ extern bool g_bIsActiveHi;
 extern bool g_bBsUnindent;
 extern bool g_bIndentGuideLF;
 extern int  g_iEdgeModeOrig;
-extern int  g_iEdgeColOrig;
+extern Sci_Position g_iEdgeColOrig;
 
 #define FRAMESIZE GetSystemMetrics(SM_CXEDGE)
 //SM_CXBORDER //3D??
@@ -100,7 +101,7 @@ HorizontalRuler::~HorizontalRuler()
                                    TEXT( "Mode" ), g_iEdgeModeOrig );
 
     Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ),
-                                   TEXT( "Column" ), g_iEdgeColOrig );
+                                   TEXT( "Column" ), static_cast<int>(g_iEdgeColOrig) );
 
     if ( g_bIsActiveHi == true )
         nBuf = 1;
@@ -167,7 +168,7 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
                                   &g_iEdgeModeOrig );
 
     Ini::getInstance()->readDate( TEXT( "ColumnHighlight" ), TEXT( "Column" ),
-                                  &g_iEdgeColOrig );
+                                  &static_cast<int>(g_iEdgeColOrig) );
 
     Ini::getInstance()->readDate( TEXT( "ColumnHighlight" ), TEXT( "Enable" ),
                                   buf, MAX_PATH );
@@ -350,7 +351,7 @@ void HorizontalRuler::PaintRuler()
     wchar_t sColumNumber[10] = {L""};
     int nLength;
     //??????????
-    int nCaret;
+    Sci_Position nCaret;
 
     if ( this->nCharWidth == 0 )
         return;
@@ -375,13 +376,13 @@ void HorizontalRuler::PaintRuler()
 
     //??????????
     bool rect = ( bool )::SendMessage( this->scintillaHwnd, SCI_SELECTIONISRECTANGLE, 0, 0 );
-    int vsp = 0;
+    Sci_Position vsp = 0;
     if ( rect )
-        vsp = ( int )::SendMessage( this->scintillaHwnd, SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE, 0, 0 );
+        vsp = ( Sci_Position )::SendMessage( this->scintillaHwnd, SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE, 0, 0 );
     else
     {
         int sel = ( int )::SendMessage( this->scintillaHwnd, SCI_GETMAINSELECTION, 0, 0 );
-        vsp = ( int )::SendMessage( this->scintillaHwnd, SCI_GETSELECTIONNCARETVIRTUALSPACE, sel, 0 );
+        vsp = ( Sci_Position )::SendMessage( this->scintillaHwnd, SCI_GETSELECTIONNCARETVIRTUALSPACE, sel, 0 );
     }
 
     nCaret = this->GetCaretPos() + vsp;
@@ -465,7 +466,7 @@ void HorizontalRuler::PaintRuler()
     ReleaseDC( this->tabHwnd, hDC );
 }
 
-int HorizontalRuler::GetCaretPos()
+Sci_Position HorizontalRuler::GetCaretPos()
 {
     //??????????
     int i;
@@ -476,14 +477,13 @@ int HorizontalRuler::GetCaretPos()
     int nWideExchange;
     int nAnsiExchange;
 
-    int nCaret;
+    Sci_Position nCaret, nLineLength;
     int nTabSpace;
-    int nLineLength;
 
-    nLineLength = ( int )SendMessage( this->scintillaHwnd, SCI_GETCURLINE, 0,
+    nLineLength = ( Sci_Position )SendMessage( this->scintillaHwnd, SCI_GETCURLINE, 0,
                                       0 );
     curLin = new char[nLineLength];
-    nCaret = ( int )SendMessage( this->scintillaHwnd, SCI_GETCURLINE,
+    nCaret = ( Sci_Position )SendMessage( this->scintillaHwnd, SCI_GETCURLINE,
                                  nLineLength, ( LPARAM )curLin );
     nTabSpace = ( int )SendMessage( this->scintillaHwnd, SCI_GETTABWIDTH, 0,
                                     0 );
@@ -545,11 +545,12 @@ bool HorizontalRuler::HitDrawArea( int lx, int ly )
 
 int HorizontalRuler::EdgeLine( int lx, int /* y */)
 {
-    int nSetEdgeLine, nNowEdgeLine;
+    int nSetEdgeLine;
+    Sci_Position nNowEdgeLine;
     int nEdgeLineMode;
     nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left +
                            this->nMarginWidth ) ) / this->nCharWidth;
-    nNowEdgeLine = ( int )SendMessage( this->scintillaHwnd, SCI_GETEDGECOLUMN,
+    nNowEdgeLine = ( Sci_Position )SendMessage( this->scintillaHwnd, SCI_GETEDGECOLUMN,
                                        0, 0 );
     nEdgeLineMode = ( int )SendMessage( this->scintillaHwnd, SCI_GETEDGEMODE,
                                         0, 0 );

@@ -29,6 +29,7 @@ http://sourceforge.jp/projects/opensource/wiki/licenses%2Fzlib_libpng_license
 #define HORIZONTAL_RULER
 
 #include "PluginInterface.h"
+#include "Scintilla.h"
 
 LRESULT CALLBACK RulerWndProc( HWND hwnd, UINT uMsg, WPARAM wParam,
                                LPARAM lParam );
@@ -89,7 +90,7 @@ class HorizontalRuler
         void GetRuleArea();
         void SecureArea();
         void PaintRuler();
-        int GetCaretPos();
+        Sci_Position GetCaretPos();
 
         void SendSizeToMain();
 
