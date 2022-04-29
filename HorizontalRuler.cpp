@@ -482,6 +482,7 @@ Sci_Position HorizontalRuler::GetCaretPos()
 
     nLineLength = ( Sci_Position )SendMessage( this->scintillaHwnd, SCI_GETCURLINE, 0,
                                       0 );
+    nLineLength += 2;
     curLin = new char[nLineLength];
     nCaret = ( Sci_Position )SendMessage( this->scintillaHwnd, SCI_GETCURLINE,
                                  nLineLength, ( LPARAM )curLin );

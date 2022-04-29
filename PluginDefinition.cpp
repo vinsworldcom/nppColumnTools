@@ -282,6 +282,7 @@ Sci_Position GetColumnCaretPos( HWND hCurScintilla )
 
     nLineLength = ( Sci_Position )SendMessage( hCurScintilla, SCI_GETCURLINE, 0,
                                       0 );
+    nLineLength += 2;
     curLin = new char[nLineLength];
     nCaret = ( Sci_Position )SendMessage( hCurScintilla, SCI_GETCURLINE,
                                  nLineLength, ( LPARAM )curLin );
