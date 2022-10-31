@@ -11,6 +11,7 @@ extern NppData   nppData;
 
 extern bool  g_bBsUnindent;
 extern bool  g_bIndentGuideLF;
+extern bool  g_bRulerStart;
 
 INT_PTR CALLBACK SettingsDlg( HWND hWndDlg, UINT msg, WPARAM wParam,
                               LPARAM lParam )
@@ -23,6 +24,11 @@ INT_PTR CALLBACK SettingsDlg( HWND hWndDlg, UINT msg, WPARAM wParam,
                          ( WPARAM )( g_bBsUnindent ? 1 : 0 ), 0 );
             SendMessage( GetDlgItem( hWndDlg, IDC_CHK_IGLF ), BM_SETCHECK,
                          ( WPARAM )( g_bIndentGuideLF ? 1 : 0 ), 0 );
+
+            SendMessage( GetDlgItem( hWndDlg, IDC_RBN_0 ), BM_SETCHECK,
+                         ( WPARAM )( g_bRulerStart ? 0 : 1 ), 0 );
+            SendMessage( GetDlgItem( hWndDlg, IDC_RBN_1 ), BM_SETCHECK,
+                         ( WPARAM )( g_bRulerStart ? 1 : 0 ), 0 );
 
             std::string version;
             version = "<a>";
@@ -99,6 +105,38 @@ INT_PTR CALLBACK SettingsDlg( HWND hWndDlg, UINT msg, WPARAM wParam,
                         g_bIndentGuideLF = false;
 
                     doBufferSets();
+
+                    return TRUE;
+                }
+
+                case IDC_RBN_0:
+                {
+                    int check = ( int )::SendMessage( GetDlgItem( hWndDlg, IDC_RBN_0 ),
+                                                      BM_GETCHECK, 0, 0 );
+
+                    if ( check & BST_CHECKED )
+                        g_bRulerStart = false;
+                    else
+                        g_bRulerStart = true;
+
+                    SendMessage( GetDlgItem( hWndDlg, IDC_RBN_1 ), BM_SETCHECK,
+                                 ( WPARAM )( g_bRulerStart ? 1 : 0 ), 0 );
+
+                    return TRUE;
+                }
+
+                case IDC_RBN_1:
+                {
+                    int check = ( int )::SendMessage( GetDlgItem( hWndDlg, IDC_RBN_1 ),
+                                                      BM_GETCHECK, 0, 0 );
+
+                    if ( check & BST_CHECKED )
+                        g_bRulerStart = true;
+                    else
+                        g_bRulerStart = false;
+
+                    SendMessage( GetDlgItem( hWndDlg, IDC_RBN_0 ), BM_SETCHECK,
+                                 ( WPARAM )( g_bRulerStart ? 0 : 1 ), 0 );
 
                     return TRUE;
                 }

@@ -37,6 +37,10 @@
 #define IDC_CHK_BSU            (IDD_SETTINGS + 2)
 #define IDC_CHK_IGLF           (IDD_SETTINGS + 3)
 
-#define IDC_STC_VER            (IDD_SETTINGS + 4)
+#define IDC_GRP1               (IDD_SETTINGS + 4)
+#define IDC_RBN_0              (IDD_SETTINGS + 5)
+#define IDC_RBN_1              (IDD_SETTINGS + 6)
+
+#define IDC_STC_VER            (IDD_SETTINGS + 7)
 
 #endif

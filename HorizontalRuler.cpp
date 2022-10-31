@@ -46,6 +46,7 @@ extern WNDPROC oldWndProc;
 extern bool g_bIsActiveHi;
 extern bool g_bBsUnindent;
 extern bool g_bIndentGuideLF;
+extern bool g_bRulerStart;
 extern int  g_iEdgeModeOrig;
 extern Sci_Position g_iEdgeColOrig;
 
@@ -88,13 +89,19 @@ HorizontalRuler::~HorizontalRuler()
         nBuf = 1;
     else
         nBuf = 0;
-
     Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ), TEXT( "Fix" ),
                                    nBuf );
 
 
     Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ),
                                    TEXT( "Visible" ), this->enable );
+
+    if ( g_bRulerStart == true )
+        nBuf = 1;
+    else
+        nBuf = 0;
+    Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ),
+                                   TEXT( "RulerStart" ), nBuf );
 
     // Column
     Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ),
@@ -107,7 +114,6 @@ HorizontalRuler::~HorizontalRuler()
         nBuf = 1;
     else
         nBuf = 0;
-
     Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ), TEXT( "Enable" ),
                                    nBuf );
 
@@ -116,7 +122,6 @@ HorizontalRuler::~HorizontalRuler()
         nBuf = 1;
     else
         nBuf = 0;
-
     Ini::getInstance()->writeDate( TEXT( "BackspaceUnindent" ), TEXT( "Enable" ),
                                    nBuf );
 
@@ -125,7 +130,6 @@ HorizontalRuler::~HorizontalRuler()
         nBuf = 1;
     else
         nBuf = 0;
-
     Ini::getInstance()->writeDate( TEXT( "IndentGuidesLookForward" ), TEXT( "Enable" ),
                                    nBuf );
 }
@@ -162,6 +166,12 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
 
     Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "Visible" ),
                                   &this->enable );
+
+    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "RulerStart" ),
+                                  buf, MAX_PATH );
+    nBuf = _ttoi( buf );
+    if ( nBuf != 0 )
+        g_bRulerStart = true;
 
     // Column
     Ini::getInstance()->readDate( TEXT( "ColumnHighlight" ), TEXT( "Mode" ),
@@ -398,10 +408,12 @@ void HorizontalRuler::PaintRuler()
     drawRc.right = rc.right;
     FillRect( hDC, &drawRc, ( HBRUSH )GetStockObject( WHITE_BRUSH ) );
 
+    if ( g_bRulerStart )
+        nStartCol = 1;
     //????
     if ( nScrollMod == 0 )
     {
-        if ( ( nStartCol % 10 ) == 0 )
+        if ( ( nStartCol - nStartCol % 10 ) == 0 )
         {
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol );
@@ -418,7 +430,7 @@ void HorizontalRuler::PaintRuler()
             LineTo( hDC, nRulerStartX, rc.top + this->nTopMargin );
         }
 
-        if ( nStartCol == nCaret )
+        if ( nStartCol - nStartCol == nCaret )
         {
             RECT rcCaret;
             rcCaret.left = nRulerStartX + 2;
@@ -433,7 +445,7 @@ void HorizontalRuler::PaintRuler()
     {
         tmp = nRulerStartX - nScrollMod + ( i * this->nCharWidth );
 
-        if ( ( nStartCol + i ) % 10 == 0 )
+        if ( ( nStartCol - nStartCol + i ) % 10 == 0 )
         {
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol + i );
@@ -451,7 +463,7 @@ void HorizontalRuler::PaintRuler()
             LineTo( hDC, tmp, rc.top + this->nTopMargin );
         }
 
-        if ( ( nStartCol + i ) == nCaret )
+        if ( ( nStartCol - nStartCol + i ) == nCaret )
         {
             RECT rcCaret;
             rcCaret.left = tmp + 2;

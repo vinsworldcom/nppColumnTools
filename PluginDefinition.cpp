@@ -36,6 +36,7 @@ HINSTANCE g_hInst;
 bool g_bIsActiveHi    = false;
 bool g_bBsUnindent    = false;
 bool g_bIndentGuideLF = false;
+bool g_bRulerStart    = false;
 int  g_iEdgeModeOrig;
 Sci_Position g_iEdgeColOrig;
 
