@@ -4,14 +4,16 @@
 
 #include "PluginInterface.h"
 #include "PluginDefinition.h"
+#include "HorizontalRuler.h"
 #include "resource.h"
 
 extern HINSTANCE g_hInst;
 extern NppData   nppData;
 
-extern bool  g_bBsUnindent;
-extern bool  g_bIndentGuideLF;
-extern bool  g_bRulerStart;
+extern bool g_bBsUnindent;
+extern bool g_bIndentGuideLF;
+extern HorizontalRuler mainHRuler;
+extern HorizontalRuler subHRuler;
 
 INT_PTR CALLBACK SettingsDlg( HWND hWndDlg, UINT msg, WPARAM wParam,
                               LPARAM lParam )
@@ -26,9 +28,9 @@ INT_PTR CALLBACK SettingsDlg( HWND hWndDlg, UINT msg, WPARAM wParam,
                          ( WPARAM )( g_bIndentGuideLF ? 1 : 0 ), 0 );
 
             SendMessage( GetDlgItem( hWndDlg, IDC_RBN_0 ), BM_SETCHECK,
-                         ( WPARAM )( g_bRulerStart ? 0 : 1 ), 0 );
+                         ( WPARAM )( mainHRuler.bRulerStart ? 0 : 1 ), 0 );
             SendMessage( GetDlgItem( hWndDlg, IDC_RBN_1 ), BM_SETCHECK,
-                         ( WPARAM )( g_bRulerStart ? 1 : 0 ), 0 );
+                         ( WPARAM )( mainHRuler.bRulerStart ? 1 : 0 ), 0 );
 
             std::string version;
             version = "<a>";
@@ -115,12 +117,18 @@ INT_PTR CALLBACK SettingsDlg( HWND hWndDlg, UINT msg, WPARAM wParam,
                                                       BM_GETCHECK, 0, 0 );
 
                     if ( check & BST_CHECKED )
-                        g_bRulerStart = false;
+                    {
+                        mainHRuler.bRulerStart = false;
+                        subHRuler.bRulerStart = false;
+                    }
                     else
-                        g_bRulerStart = true;
+                    {
+                        mainHRuler.bRulerStart = true;
+                        subHRuler.bRulerStart = true;
+                    }
 
                     SendMessage( GetDlgItem( hWndDlg, IDC_RBN_1 ), BM_SETCHECK,
-                                 ( WPARAM )( g_bRulerStart ? 1 : 0 ), 0 );
+                                 ( WPARAM )( mainHRuler.bRulerStart ? 1 : 0 ), 0 );
 
                     return TRUE;
                 }
@@ -131,12 +139,18 @@ INT_PTR CALLBACK SettingsDlg( HWND hWndDlg, UINT msg, WPARAM wParam,
                                                       BM_GETCHECK, 0, 0 );
 
                     if ( check & BST_CHECKED )
-                        g_bRulerStart = true;
+                    {
+                        mainHRuler.bRulerStart = true;
+                        subHRuler.bRulerStart = true;
+                    }
                     else
-                        g_bRulerStart = false;
+                    {
+                        mainHRuler.bRulerStart = false;
+                        subHRuler.bRulerStart = false;
+                    }
 
                     SendMessage( GetDlgItem( hWndDlg, IDC_RBN_0 ), BM_SETCHECK,
-                                 ( WPARAM )( g_bRulerStart ? 0 : 1 ), 0 );
+                                 ( WPARAM )( mainHRuler.bRulerStart ? 0 : 1 ), 0 );
 
                     return TRUE;
                 }

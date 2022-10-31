@@ -46,7 +46,6 @@ extern WNDPROC oldWndProc;
 extern bool g_bIsActiveHi;
 extern bool g_bBsUnindent;
 extern bool g_bIndentGuideLF;
-extern bool g_bRulerStart;
 extern int  g_iEdgeModeOrig;
 extern Sci_Position g_iEdgeColOrig;
 
@@ -64,6 +63,7 @@ HorizontalRuler::HorizontalRuler() :
     nCharWidth( 0 ),
     nCharHeight( 0 ),
     nMarginWidth( 0 ),
+    bRulerStart( false ),
     nppHwnd( 0 ),
     scintillaHwnd( 0 ),
     tabHwnd( 0 ),
@@ -96,7 +96,7 @@ HorizontalRuler::~HorizontalRuler()
     Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ),
                                    TEXT( "Visible" ), this->enable );
 
-    if ( g_bRulerStart == true )
+    if ( this->bRulerStart == true )
         nBuf = 1;
     else
         nBuf = 0;
@@ -160,7 +160,6 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
     Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "Fix" ),
                                   buf, MAX_PATH );
     nBuf = _ttoi( buf );
-
     if ( nBuf != 0 )
         this->bFontFix = true;
 
@@ -171,7 +170,7 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
                                   buf, MAX_PATH );
     nBuf = _ttoi( buf );
     if ( nBuf != 0 )
-        g_bRulerStart = true;
+        this->bRulerStart = true;
 
     // Column
     Ini::getInstance()->readDate( TEXT( "ColumnHighlight" ), TEXT( "Mode" ),
@@ -408,7 +407,7 @@ void HorizontalRuler::PaintRuler()
     drawRc.right = rc.right;
     FillRect( hDC, &drawRc, ( HBRUSH )GetStockObject( WHITE_BRUSH ) );
 
-    if ( g_bRulerStart )
+    if ( this->bRulerStart )
         nStartCol = 1;
     //????
     if ( nScrollMod == 0 )
