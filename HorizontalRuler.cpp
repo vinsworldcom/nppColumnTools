@@ -407,12 +407,17 @@ void HorizontalRuler::PaintRuler()
     drawRc.right = rc.right;
     FillRect( hDC, &drawRc, ( HBRUSH )GetStockObject( WHITE_BRUSH ) );
 
+    // Ruler starts at 0 (default) or 1
+    int nAdjust = 0;
     if ( this->bRulerStart )
-        nStartCol = 1;
+    {
+        nStartCol++;
+        nAdjust = 1;
+    }
     //????
     if ( nScrollMod == 0 )
     {
-        if ( ( nStartCol - nStartCol % 10 ) == 0 )
+        if ( ( nStartCol % 10 - nAdjust ) == 0 )
         {
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol );
@@ -429,7 +434,7 @@ void HorizontalRuler::PaintRuler()
             LineTo( hDC, nRulerStartX, rc.top + this->nTopMargin );
         }
 
-        if ( nStartCol - nStartCol == nCaret )
+        if ( ( nStartCol - nAdjust ) == nCaret )
         {
             RECT rcCaret;
             rcCaret.left = nRulerStartX + 2;
@@ -444,7 +449,7 @@ void HorizontalRuler::PaintRuler()
     {
         tmp = nRulerStartX - nScrollMod + ( i * this->nCharWidth );
 
-        if ( ( nStartCol - nStartCol + i ) % 10 == 0 )
+        if ( ( ( nStartCol + i ) % 10 - nAdjust ) == 0 )
         {
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol + i );
@@ -462,7 +467,7 @@ void HorizontalRuler::PaintRuler()
             LineTo( hDC, tmp, rc.top + this->nTopMargin );
         }
 
-        if ( ( nStartCol - nStartCol + i ) == nCaret )
+        if ( ( nStartCol + i - nAdjust ) == nCaret )
         {
             RECT rcCaret;
             rcCaret.left = tmp + 2;
