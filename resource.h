@@ -12,7 +12,7 @@
 #define VER_STRING  STR(VER_MAJOR) "." STR(VER_MINOR) "." STR(VER_RELEASE) "." STR(VER_BUILD)
 
 #define FILE_DESCRIPTION  "Notepad++ Plugin for column highlighting and ruler."
-#define INTERNAL_NAME     "&Column Tools"
+#define INTERNAL_NAME     "Column Tools"
 #define FILENAME          "ColumnTools"
 
 #define COMPANY_NAME      "Vin's World"
