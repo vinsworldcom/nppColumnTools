@@ -565,7 +565,10 @@ int HorizontalRuler::EdgeLine( int lx, int /* y */)
     int nSetEdgeLine;
     Sci_Position nNowEdgeLine;
     int nEdgeLineMode;
-    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left +
+    int xOffset = 0;
+
+    xOffset = ( int )SendMessage( this->scintillaHwnd, SCI_GETXOFFSET, 0, 0 );
+    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left + xOffset +
                            this->nMarginWidth ) ) / this->nCharWidth;
     nNowEdgeLine = ( Sci_Position )SendMessage( this->scintillaHwnd, SCI_GETEDGECOLUMN,
                                        0, 0 );
@@ -586,7 +589,10 @@ int HorizontalRuler::EdgeLine( int lx, int /* y */)
 int HorizontalRuler::MultiEdgeLine( int lx, bool multiEdgeOn )
 {
     int nSetEdgeLine;
-    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left +
+    int xOffset = 0;
+
+    xOffset = ( int )SendMessage( this->scintillaHwnd, SCI_GETXOFFSET, 0, 0 );
+    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left + xOffset +
                            this->nMarginWidth ) ) / this->nCharWidth;
 
     COLORREF cColor = ( COLORREF )::SendMessage( this->scintillaHwnd, SCI_GETEDGECOLOUR, 0, 0 );
