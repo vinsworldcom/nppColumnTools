@@ -63,6 +63,7 @@ HorizontalRuler::HorizontalRuler() :
     nCharWidth( 0 ),
     nCharHeight( 0 ),
     nMarginWidth( 0 ),
+    bRulerStart( false ),
     nppHwnd( 0 ),
     scintillaHwnd( 0 ),
     tabHwnd( 0 ),
@@ -88,13 +89,19 @@ HorizontalRuler::~HorizontalRuler()
         nBuf = 1;
     else
         nBuf = 0;
-
     Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ), TEXT( "Fix" ),
                                    nBuf );
 
 
     Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ),
                                    TEXT( "Visible" ), this->enable );
+
+    if ( this->bRulerStart == true )
+        nBuf = 1;
+    else
+        nBuf = 0;
+    Ini::getInstance()->writeDate( TEXT( "HorizontalRuler" ),
+                                   TEXT( "RulerStart" ), nBuf );
 
     // Column
     Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ),
@@ -107,7 +114,6 @@ HorizontalRuler::~HorizontalRuler()
         nBuf = 1;
     else
         nBuf = 0;
-
     Ini::getInstance()->writeDate( TEXT( "ColumnHighlight" ), TEXT( "Enable" ),
                                    nBuf );
 
@@ -116,7 +122,6 @@ HorizontalRuler::~HorizontalRuler()
         nBuf = 1;
     else
         nBuf = 0;
-
     Ini::getInstance()->writeDate( TEXT( "BackspaceUnindent" ), TEXT( "Enable" ),
                                    nBuf );
 
@@ -125,7 +130,6 @@ HorizontalRuler::~HorizontalRuler()
         nBuf = 1;
     else
         nBuf = 0;
-
     Ini::getInstance()->writeDate( TEXT( "IndentGuidesLookForward" ), TEXT( "Enable" ),
                                    nBuf );
 }
@@ -156,12 +160,17 @@ void HorizontalRuler::Init( HWND npp, HWND scintilla, HWND tab )
     Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "Fix" ),
                                   buf, MAX_PATH );
     nBuf = _ttoi( buf );
-
     if ( nBuf != 0 )
         this->bFontFix = true;
 
     Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "Visible" ),
                                   &this->enable );
+
+    Ini::getInstance()->readDate( TEXT( "HorizontalRuler" ), TEXT( "RulerStart" ),
+                                  buf, MAX_PATH );
+    nBuf = _ttoi( buf );
+    if ( nBuf != 0 )
+        this->bRulerStart = true;
 
     // Column
     Ini::getInstance()->readDate( TEXT( "ColumnHighlight" ), TEXT( "Mode" ),
@@ -398,10 +407,17 @@ void HorizontalRuler::PaintRuler()
     drawRc.right = rc.right;
     FillRect( hDC, &drawRc, ( HBRUSH )GetStockObject( WHITE_BRUSH ) );
 
+    // Ruler starts at 0 (default) or 1
+    int nAdjust = 0;
+    if ( this->bRulerStart )
+    {
+        nStartCol++;
+        nAdjust = 1;
+    }
     //????
     if ( nScrollMod == 0 )
     {
-        if ( ( nStartCol % 10 ) == 0 )
+        if ( ( nStartCol % 10 - nAdjust ) == 0 )
         {
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol );
@@ -418,7 +434,7 @@ void HorizontalRuler::PaintRuler()
             LineTo( hDC, nRulerStartX, rc.top + this->nTopMargin );
         }
 
-        if ( nStartCol == nCaret )
+        if ( ( nStartCol - nAdjust ) == nCaret )
         {
             RECT rcCaret;
             rcCaret.left = nRulerStartX + 2;
@@ -433,7 +449,7 @@ void HorizontalRuler::PaintRuler()
     {
         tmp = nRulerStartX - nScrollMod + ( i * this->nCharWidth );
 
-        if ( ( nStartCol + i ) % 10 == 0 )
+        if ( ( ( nStartCol + i ) % 10 - nAdjust ) == 0 )
         {
             memset( sColumNumber, 0, sizeof( sColumNumber ) );
             nLength = swprintf_s( sColumNumber, 10, L"%d", nStartCol + i );
@@ -451,7 +467,7 @@ void HorizontalRuler::PaintRuler()
             LineTo( hDC, tmp, rc.top + this->nTopMargin );
         }
 
-        if ( ( nStartCol + i ) == nCaret )
+        if ( ( nStartCol + i - nAdjust ) == nCaret )
         {
             RECT rcCaret;
             rcCaret.left = tmp + 2;
@@ -549,7 +565,10 @@ int HorizontalRuler::EdgeLine( int lx, int /* y */)
     int nSetEdgeLine;
     Sci_Position nNowEdgeLine;
     int nEdgeLineMode;
-    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left +
+    int xOffset = 0;
+
+    xOffset = ( int )SendMessage( this->scintillaHwnd, SCI_GETXOFFSET, 0, 0 );
+    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left + xOffset +
                            this->nMarginWidth ) ) / this->nCharWidth;
     nNowEdgeLine = ( Sci_Position )SendMessage( this->scintillaHwnd, SCI_GETEDGECOLUMN,
                                        0, 0 );
@@ -570,7 +589,10 @@ int HorizontalRuler::EdgeLine( int lx, int /* y */)
 int HorizontalRuler::MultiEdgeLine( int lx, bool multiEdgeOn )
 {
     int nSetEdgeLine;
-    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left +
+    int xOffset = 0;
+
+    xOffset = ( int )SendMessage( this->scintillaHwnd, SCI_GETXOFFSET, 0, 0 );
+    nSetEdgeLine = ( lx - ( this->rulerDesctopRect.left + xOffset +
                            this->nMarginWidth ) ) / this->nCharWidth;
 
     COLORREF cColor = ( COLORREF )::SendMessage( this->scintillaHwnd, SCI_GETEDGECOLOUR, 0, 0 );

@@ -69,6 +69,7 @@ class HorizontalRuler
     public:
         int nFontSize;
         bool bFontFix;
+        bool bRulerStart;
 
         HorizontalRuler();
         ~HorizontalRuler();
